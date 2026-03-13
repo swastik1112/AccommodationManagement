@@ -1,4 +1,4 @@
-# Girls Accommodation Room Management System (Girls RMS)
+# Accommodation Room Management System 
 
 A secure, role-based web application built with **ASP.NET Core MVC (.NET 8)** to manage accommodation rooms for girl employees in a company/hostel setting.
 
@@ -17,7 +17,7 @@ A secure, role-based web application built with **ASP.NET Core MVC (.NET 8)** to
   - Assign/Transfer girls to rooms/beds
   - Manage (view/update status) all complaints
 
-- **User (Girl Employee)** — Personal access
+- **User (Employee)** — Personal access
   - View assigned room, bed & roommates
   - Submit & track personal maintenance complaints
 
@@ -93,13 +93,13 @@ GirlsAccommodationRMS/
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/GirlsAccommodationRMS.git
-cd GirlsAccommodationRMS
+git clone https://github.com/swastik1112/AccommodationManagement.git
+cd AccommodationManagement
 
 dotnet restore
 
 "ConnectionStrings": {
-  "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=GirlsRMS;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
+  "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=AccomRMS;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
 }
 
 dotnet ef migrations add InitialCreate

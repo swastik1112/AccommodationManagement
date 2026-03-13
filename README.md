@@ -1,6 +1,6 @@
 # Accommodation Room Management System 
 
-A secure, role-based web application built with **ASP.NET Core MVC (.NET 8)** to manage accommodation rooms for girl employees in a company/hostel setting.
+A secure, role-based web application built with **ASP.NET Core MVC (.NET 8)** to manage accommodation rooms for employees in a company/hostel setting.
 
 ## Features
 

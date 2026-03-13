@@ -1,0 +1,67 @@
+﻿@model IEnumerable<RoomAllocation>
+
+@{
+    ViewData["Title"] = "Allocations";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Current Room Allocations</h2>
+        <a asp-action="Assign" class="btn btn-success">
+            <i class="bi bi-plus-lg"></i> Assign New Girl
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center py-5">
+            No allocations yet. Click "Assign New Girl" to begin.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Girl Name</th>
+                        <th>Room</th>
+                        <th>Bed</th>
+                        <th>Allocated On</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var alloc in Model)
+                    {
+                        <tr>
+                            <td>@alloc.User?.FullName</td>
+                            <td>Room @alloc.Room?.RoomNumber</td>
+                            <td>@alloc.Bed?.BedNumber</td>
+                            <td>@alloc.AllocationDate.ToString("dd MMM yyyy HH:mm")</td>
+                            <td>
+                                <a asp-action="Transfer" asp-route-userId="@alloc.UserId"
+                                   class="btn btn-sm btn-warning">Transfer</a>
+                                <form asp-action="Remove" asp-route-userId="@alloc.UserId" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Remove @alloc.User?.FullName from this room?');">
+                                        Remove
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

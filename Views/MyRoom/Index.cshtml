@@ -1,0 +1,91 @@
+﻿@using System.Security.Claims
+@model Room
+
+@{
+    ViewData["Title"] = "My Room";
+}
+
+@if (Model == null)
+{
+    <div class="alert alert-warning">
+        <h4>You are not assigned to any room yet.</h4>
+        <p>Please contact the Warden or Admin.</p>
+    </div>
+}
+else
+{
+    <div class="container-fluid">
+        <h2 class="mb-4">My Room: @Model.RoomNumber</h2>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5>My Bed Information</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (ViewBag.BedNumber == "Not assigned" || string.IsNullOrEmpty(ViewBag.BedNumber?.ToString()))
+                        {
+                            <div class="text-center py-3">
+                                <i class="bi bi-exclamation-circle-fill text-warning display-4"></i>
+                                <h5 class="mt-3 text-muted">No bed assigned yet</h5>
+                                <small class="text-muted">Please contact the Warden or Admin</small>
+                            </div>
+                        }
+                        else
+                        {
+                            <h4 class="text-success">Bed: @ViewBag.BedNumber</h4>
+                            <p>
+                                <strong>Allocated on:</strong>
+                                @(ViewBag.AllocationDate != null
+                                                        ? ((DateTime)ViewBag.AllocationDate).ToString("dd MMMM yyyy")
+                                                        : "N/A")
+                    </p>
+                                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5>Roommates (@(Model.Beds.Count(b => b.IsOccupied) - 1) others)</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            @foreach (var bed in Model.Beds.Where(b => b.IsOccupied && b.Allocation?.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier)))
+                            {
+                                <li class="list-group-item">
+                                    @bed.Allocation?.User?.FullName - Bed @bed.BedNumber
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5>Room Beds Overview</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    @foreach (var bed in Model.Beds)
+                    {
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="card text-center border @(bed.IsOccupied ? "border-danger" : "border-success")">
+                                <div class="card-body">
+                                    <h5>Bed @bed.BedNumber</h5>
+                                    <span class="badge bg-@(bed.IsOccupied ? "danger" : "success")">
+                                        @(bed.IsOccupied ? "Occupied" : "Vacant")
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

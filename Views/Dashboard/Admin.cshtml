@@ -1,0 +1,246 @@
+﻿@model AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 animate__animated animate__fadeIn">
+        <h2 class="fw-bold text-primary mb-0">
+            <i class="bi bi-speedometer2 me-3 text-primary"></i>
+            Admin Control Center
+        </h2>
+        <small class="text-muted">Last updated: @DateTime.Now.ToString("dd MMM yyyy HH:mm")</small>
+    </div>
+
+    <!-- Stats Cards Row -->
+    <div class="row g-4 mb-5">
+        <!-- Total Rooms -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-lg h-100 stat-card animate__animated animate__zoomIn">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-primary text-white mb-3 mx-auto">
+                        <i class="bi bi-house-door-fill fs-3"></i>
+                    </div>
+                    <h5 class="text-muted mb-1">Total Rooms</h5>
+                    <h2 class="fw-bold counter" data-count="@Model.TotalRooms">0</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Beds Occupancy -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-lg h-100 stat-card animate__animated animate__zoomIn animate__delay-1s">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-success text-white mb-3 mx-auto">
+                        <i class="bi bi-segmented-nav fs-3"></i>
+                    </div>
+                    <h5 class="text-muted mb-1">Beds Occupancy</h5>
+                    <h2 class="fw-bold mb-2 counter" data-count="@Model.OccupiedBeds">@Model.OccupiedBeds</h2>
+                    <small class="text-success fw-bold">@Model.VacantBeds vacant</small>
+
+                    <!-- Animated Progress Circle -->
+                    <div class="mt-3 position-relative mx-auto" style="width: 100px; height: 100px;">
+                        <svg class="progress-ring" width="100" height="100">
+                            <circle class="progress-ring__circle-bg" cx="50" cy="50" r="45" />
+                            <circle class="progress-ring__circle" cx="50" cy="50" r="45"
+                                    stroke-dasharray="283" stroke-dashoffset="@(283 - (283 * (Model.OccupiedBeds * 1.0 / Model.TotalBeds)))" />
+                        </svg>
+                        <div class="position-absolute top-50 start-50 translate-middle text-center">
+                            <span class="fs-4 fw-bold">@(((double)Model.OccupiedBeds / Model.TotalBeds * 100).ToString("0.0"))%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registered Girls -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-lg h-100 stat-card animate__animated animate__zoomIn animate__delay-2s">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-info text-white mb-3 mx-auto">
+                        <i class="bi bi-people-fill fs-3"></i>
+                    </div>
+                    <h5 class="text-muted mb-1">Registered Girls</h5>
+                    <h2 class="fw-bold counter" data-count="@Model.TotalGirls">0</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Complaints -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-lg h-100 stat-card animate__animated animate__zoomIn animate__delay-3s">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-warning text-dark mb-3 mx-auto">
+                        <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                    </div>
+                    <h5 class="text-muted mb-1">Pending Complaints</h5>
+                    <h2 class="fw-bold counter text-warning" data-count="@Model.PendingComplaints">0</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Quick Actions -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-lg h-100 animate__animated animate__fadeInLeft">
+                <div class="card-header bg-light py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-lightning-charge-fill me-2 text-warning"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <a asp-controller="Room" asp-action="Create" class="btn btn-primary w-100 py-4 shadow-sm action-btn">
+                                <i class="bi bi-plus-circle fs-3 mb-2 d-block"></i>
+                                Add New Room
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a asp-controller="Account" asp-action="Register" class="btn btn-success w-100 py-4 shadow-sm action-btn">
+                                <i class="bi bi-person-plus fs-3 mb-2 d-block"></i>
+                                Create User/Warden
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a asp-controller="Allocation" asp-action="Index" class="btn btn-info w-100 py-4 shadow-sm action-btn">
+                                <i class="bi bi-person-check fs-3 mb-2 d-block"></i>
+                                Manage Allocations
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a asp-controller="Complaint" asp-action="Index" class="btn btn-warning w-100 py-4 shadow-sm action-btn">
+                                <i class="bi bi-exclamation-circle fs-3 mb-2 d-block"></i>
+                                View Complaints
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Allocations -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-lg h-100 animate__animated animate__fadeInRight">
+                <div class="card-header bg-light py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2 text-info"></i>Recent Allocations</h5>
+                </div>
+                <div class="card-body p-0">
+                    @if (!Model.RecentAllocations.Any())
+                    {
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-calendar-x display-4 d-block mb-3 opacity-50"></i>
+                            <h5>No recent allocations</h5>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var alloc in Model.RecentAllocations)
+                            {
+                                <div class="list-group-item list-group-item-action px-4 py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width:50px;height:50px;">
+                                            @(alloc.User?.FullName?.FirstOrDefault() ?? '?')
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <strong>@alloc.User?.FullName</strong>
+                                            <div class="small text-muted">
+                                                → Room @alloc.Room?.RoomNumber • Bed @alloc.Bed?.BedNumber
+                                            </div>
+                                        </div>
+                                        <small class="text-muted">@alloc.AllocationDate.ToString("dd MMM HH:mm")</small>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .login-bg, .register-bg { /* reuse from login/register */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-card {
+            transition: all 0.3s ease;
+            border-radius: 16px;
+            background: white;
+        }
+
+            .stat-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+            }
+
+        .icon-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            font-size: 1.1rem;
+        }
+
+            .action-btn:hover {
+                transform: scale(1.05);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .progress-ring__circle-bg {
+            fill: none;
+            stroke: #e9ecef;
+            stroke-width: 10;
+        }
+
+        .progress-ring__circle {
+            fill: none;
+            stroke: #28a745;
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.8s ease;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Animated Counter
+        document.querySelectorAll('.counter').forEach(el => {
+            const target = parseInt(el.getAttribute('data-count')) || 0;
+            let count = 0;
+            const duration = 1500;
+            const step = Math.ceil(target / (duration / 16));
+
+            const update = () => {
+                count += step;
+                if (count >= target) {
+                    el.textContent = target;
+                } else {
+                    el.textContent = count;
+                    requestAnimationFrame(update);
+                }
+            };
+            update();
+        });
+    </script>
+}

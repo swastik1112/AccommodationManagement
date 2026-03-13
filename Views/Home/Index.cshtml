@@ -1,0 +1,187 @@
+﻿@{
+    ViewData["Title"] = "Girls RMS - Home";
+}
+
+<div class="hero-section min-vh-100 d-flex align-items-center text-white position-relative overflow-hidden">
+    <!-- Animated Background Gradient -->
+    <div class="bg-animation"></div>
+
+    <div class="container position-relative z-2">
+        <div class="row align-items-center">
+            <!-- Left - Welcome Content -->
+            <div class="col-lg-7 mb-5 mb-lg-0 animate__animated animate__fadeInLeft">
+                <h1 class="display-3 fw-bold mb-4">
+                    Welcome to <span class="text-warning">Girls RMS</span>
+                </h1>
+
+                <p class="lead fs-4 mb-4 opacity-90">
+                    Safe • Comfortable • Well-Managed
+                    Accommodation for Girl Employees
+                </p>
+
+                <p class="fs-5 mb-5 opacity-85">
+                    Modern hostel management system with real-time room allocation,
+                    bed availability, complaint tracking and secure access for all residents and staff.
+                </p>
+
+                <div class="d-flex flex-wrap gap-3">
+                    @if (User.Identity?.IsAuthenticated != true)
+                    {
+                        <a asp-area="" asp-controller="Account" asp-action="Login"
+                           class="btn btn-primary btn-lg px-5 py-3 shadow-lg animate__animated animate__pulse animate__infinite">
+                            <i class="bi bi-box-arrow-in-right me-2"></i> Login
+                        </a>
+
+                        <a asp-area="" asp-controller="Account" asp-action="Register"
+                           class="btn btn-outline-light btn-lg px-5 py-3 shadow-lg">
+                            <i class="bi bi-person-plus me-2"></i> Register
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-area="" asp-controller="Dashboard" asp-action="Index"
+                           class="btn btn-success btn-lg px-5 py-3 shadow-lg animate__animated animate__pulse animate__infinite">
+                            <i class="bi bi-speedometer2 me-2"></i> Go to Dashboard
+                        </a>
+
+                        <a asp-area="" asp-controller="MyRoom" asp-action="Index"
+                           class="btn btn-outline-light btn-lg px-5 py-3 shadow-lg">
+                            <i class="bi bi-door-open me-2"></i> My Room
+                        </a>
+                    }
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="row mt-5 g-4">
+                    <div class="col-6 col-md-3">
+                        <div class="card bg-white bg-opacity-10 border-0 text-center p-3 animate__animated animate__zoomIn animate__delay-1s">
+                            <h3 class="fw-bold mb-0">50+</h3>
+                            <p class="mb-0 small">Rooms</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card bg-white bg-opacity-10 border-0 text-center p-3 animate__animated animate__zoomIn animate__delay-1s">
+                            <h3 class="fw-bold mb-0">200+</h3>
+                            <p class="mb-0 small">Beds</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card bg-white bg-opacity-10 border-0 text-center p-3 animate__animated animate__zoomIn animate__delay-1s">
+                            <h3 class="fw-bold mb-0">24×7</h3>
+                            <p class="mb-0 small">Support</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card bg-white bg-opacity-10 border-0 text-center p-3 animate__animated animate__zoomIn animate__delay-1s">
+                            <h3 class="fw-bold mb-0">Safe</h3>
+                            <p class="mb-0 small">Environment</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right - Illustration / Mockup -->
+            <div class="col-lg-5 d-none d-lg-block animate__animated animate__fadeInRight">
+                <img src="https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                     alt="Girls Hostel Room"
+                     class="img-fluid rounded-4 shadow-5-strong border border-5 border-white">
+                <div class="text-center mt-4">
+                    <small class="opacity-75">Modern & Comfortable Living Spaces</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5 fw-bold animate__animated animate__fadeIn">
+            Why Choose Girls RMS?
+        </h2>
+
+        <div class="row g-4">
+            <div class="col-md-4 text-center animate__animated animate__fadeInUp">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-5">
+                        <i class="bi bi-shield-lock-fill display-1 text-primary mb-4"></i>
+                        <h4>Secure Access</h4>
+                        <p class="text-muted">Role-based authentication for Admin, Warden & Residents</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 text-center animate__animated animate__fadeInUp animate__delay-1s">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-5">
+                        <i class="bi bi-speedometer2 display-1 text-success mb-4"></i>
+                        <h4>Real-time Tracking</h4>
+                        <p class="text-muted">Live bed occupancy & room availability status</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 text-center animate__animated animate__fadeInUp animate__delay-2s">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-5">
+                        <i class="bi bi-chat-square-text-fill display-1 text-warning mb-4"></i>
+                        <h4>Complaint System</h4>
+                        <p class="text-muted">Raise & track maintenance requests easily</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white text-center">
+    <div class="container">
+        <h3 class="display-5 fw-bold mb-4 animate__animated animate__zoomIn">
+            Ready to Experience Better Accommodation Management?
+        </h3>
+        <p class="lead mb-4">
+            Login now or contact your admin/warden to get started.
+        </p>
+        @if (User.Identity?.IsAuthenticated != true)
+        {
+            <a asp-controller="Account" asp-action="Login" class="btn btn-light btn-lg px-5 py-3 shadow-lg">
+                <i class="bi bi-box-arrow-in-right me-2"></i> Login to Dashboard
+            </a>
+        }
+    </div>
+</section>
+
+@section Styles {
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+        }
+
+        .bg-animation {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(255,255,255,0.08) 0%, transparent 50%);
+            animation: float 20s infinite alternate;
+            pointer-events: none;
+        }
+
+        @@keyframes float {
+            0%
+
+        {
+            transform: translate(0, 0);
+        }
+
+        100% {
+            transform: translate(40px, -40px);
+        }
+
+        }
+    </style>
+}
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+}

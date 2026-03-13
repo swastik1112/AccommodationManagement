@@ -1,0 +1,224 @@
+﻿@model IEnumerable<Complaint>
+
+@{
+    ViewData["Title"] = "Manage Complaints (Admin)";
+    var statusFilter = ViewBag.StatusFilter as string ?? "All";
+    var search = ViewBag.Search as string ?? "";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
+        <h2 class="mb-0">
+            <i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i>
+            Manage All Complaints
+        </h2>
+        <div class="d-flex gap-2 flex-wrap">
+            <div class="input-group" style="max-width: 300px;">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search by title or name..." value="@search">
+                <button class="btn btn-outline-primary" type="button" onclick="applyFilter()">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+            <select id="statusFilter" class="form-select" style="max-width: 200px;" onchange="applyFilter()">
+                <option value="All" selected="@(statusFilter == "All")">All Status</option>
+                <option value="Pending" selected="@(statusFilter == "Pending")">Pending</option>
+                <option value="InProgress" selected="@(statusFilter == "InProgress")">In Progress</option>
+                <option value="Resolved" selected="@(statusFilter == "Resolved")">Resolved</option>
+            </select>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center py-5 shadow-sm">
+            <i class="bi bi-check-circle-fill display-4 d-block mb-3 text-success opacity-75"></i>
+            <h4>No complaints found</h4>
+            <p class="text-muted">All complaints are resolved or no complaints exist yet.</p>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered mb-0 align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>User</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ int index = 1; }
+                            @foreach (var complaint in Model)
+                            {
+                                var statusClass = complaint.Status switch
+                                {
+                                    "Pending" => "bg-warning text-dark",
+                                    "InProgress" => "bg-info text-white",
+                                    "Resolved" => "bg-success text-white",
+                                    _ => "bg-secondary text-white"
+                                };
+
+                                <tr>
+                                    <td>@index</td>
+                                    <td class="fw-bold">@complaint.Title</td>
+                                    <td>@complaint.User?.FullName <small class="text-muted">(@complaint.User?.Email)</small></td>
+                                    <td>@complaint.Date.ToString("dd MMM yyyy HH:mm")</td>
+                                    <td>
+                                        <span class="badge @statusClass px-3 py-2 fs-6">
+                                            @complaint.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-2 flex-wrap justify-content-center">
+                                            <button class="btn btn-sm btn-info text-white view-details"
+                                                    data-id="@complaint.Id"
+                                                    data-title="@complaint.Title"
+                                                    data-user="@complaint.User?.FullName"
+                                                    data-date="@complaint.Date.ToString("dd MMM yyyy HH:mm")"
+                                                    data-status="@complaint.Status"
+                                                    data-desc="@complaint.Description">
+                                                <i class="bi bi-eye"></i> View
+                                            </button>
+
+                                            @if (complaint.Status != "Resolved")
+                                            {
+                                                <select class="form-select form-select-sm status-change" style="width: auto;"
+                                                        data-id="@complaint.Id">
+                                                    <option value="Pending" asp-selected="@(complaint.Status == "Pending")">Pending</option>
+                                                    <option value="InProgress" asp-selected="@(complaint.Status == "InProgress")">In Progress</option>
+                                                    <option value="Resolved" asp-selected="@(complaint.Status == "Resolved")">Resolved</option>
+                                                </select>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                                index++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- View Complaint Modal -->
+<div class="modal fade" id="complaintModal" tabindex="-1" aria-labelledby="complaintModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="complaintModalLabel">Complaint Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5 id="modalTitle" class="mb-3"></h5>
+                <p><strong>Submitted by:</strong> <span id="modalUser"></span></p>
+                <p><strong>Date:</strong> <span id="modalDate"></span></p>
+                <p><strong>Status:</strong> <span id="modalStatus" class="badge fs-6 px-3 py-2"></span></p>
+                <hr>
+                <h6>Description:</h6>
+                <p id="modalDesc" class="bg-light p-3 rounded"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // View Details Modal
+            const viewButtons = document.querySelectorAll('.view-details');
+            const modal = new bootstrap.Modal(document.getElementById('complaintModal'));
+
+            viewButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    document.getElementById('modalTitle').textContent = this.getAttribute('data-title');
+                    document.getElementById('modalUser').textContent = this.getAttribute('data-user');
+                    document.getElementById('modalDate').textContent = this.getAttribute('data-date');
+
+                    const statusEl = document.getElementById('modalStatus');
+                    statusEl.textContent = this.getAttribute('data-status');
+                    statusEl.className = `badge fs-6 px-3 py-2 ${
+                        this.getAttribute('data-status') === 'Pending' ? 'bg-warning text-dark' :
+                        this.getAttribute('data-status') === 'InProgress' ? 'bg-info text-white' :
+                        'bg-success text-white'
+                    }`;
+
+                    document.getElementById('modalDesc').textContent = this.getAttribute('data-desc');
+                    modal.show();
+                });
+            });
+
+            // Status Change (AJAX)
+           const statusSelects = document.querySelectorAll('.status-change');
+
+            statusSelects.forEach(select => {
+                // Store original value in case we need to revert
+                select.dataset.currentStatus = select.value;
+
+                select.addEventListener('change', async function () {
+                    const complaintId = this.getAttribute('data-id');
+                    const newStatus = this.value;
+
+                    if (!confirm(`Change status to "${newStatus}"?`)) {
+                        this.value = this.dataset.currentStatus; // revert
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('id', complaintId);
+                    formData.append('newStatus', newStatus);
+                    // Anti-forgery token (must be present in layout or page)
+                    const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
+                    if (tokenElement) {
+                        formData.append('__RequestVerificationToken', tokenElement.value);
+                    }
+
+                    try {
+                        const response = await fetch('/Complaint/UpdateStatus', {
+                            method: 'POST',
+                            body: formData,  // ← use FormData, not JSON
+                            credentials: 'same-origin'  // important for cookies/token
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            alert(result.message);
+                            location.reload();  // refresh to show new status
+                        } else {
+                            alert(result.message || 'Failed to update status.');
+                            this.value = this.dataset.currentStatus; // revert
+                        }
+                    } catch (err) {
+                        alert('Error: Could not connect to server.\n' + err.message);
+                        this.value = this.dataset.currentStatus; // revert
+                    }
+                });
+            });
+        });
+
+            // Filter function
+            window.applyFilter = function () {
+                const status = document.getElementById('statusFilter').value;
+                const search = document.getElementById('searchInput').value.trim();
+                let url = `/Complaint/Index?statusFilter=${status}`;
+                if (search) url += `&search=${encodeURIComponent(search)}`;
+                window.location.href = url;
+            };
+        });
+    </script>
+}

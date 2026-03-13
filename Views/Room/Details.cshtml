@@ -1,0 +1,41 @@
+﻿@model Room
+
+@{
+    ViewData["Title"] = $"Room {Model.RoomNumber} - Beds";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">
+        Room @Model.RoomNumber
+        <small class="text-muted">(@Model.OccupiedBeds / @Model.TotalBeds occupied)</small>
+    </h2>
+
+    <div class="row g-3">
+        @foreach (var bed in Model.Beds)
+        {
+            var occupant = bed.Allocation?.User?.FullName ?? "Vacant";
+            var statusClass = bed.IsOccupied ? "bg-danger-subtle text-danger" : "bg-success-subtle text-success";
+            var badgeClass = bed.IsOccupied ? "bg-danger" : "bg-success";
+
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 shadow-sm border-@(bed.IsOccupied ? "danger" : "success")">
+                    <div class="card-body text-center">
+                        <h4 class="card-title">Bed @bed.BedNumber</h4>
+                        <span class="badge @badgeClass fs-5 px-4 py-2 mb-3">
+                            @(bed.IsOccupied ? "Occupied" : "Vacant")
+                        </span>
+                        <p class="card-text fw-bold">
+                            @occupant
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Room List
+        </a>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+﻿@model AllocationViewModel
+
+@{
+    ViewData["Title"] = "Assign Girl to Room";
+}
+
+<div class="container mt-4">
+    <h2>Assign Girl to Room</h2>
+
+    <form asp-action="Assign" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label class="form-label">Select Girl</label>
+            <select asp-for="UserId" class="form-select" required>
+                <option value="">-- Choose a girl --</option>
+                @foreach (var user in Model.Users)
+                {
+                    <option value="@user.Id">@user.FullName (@user.Email)</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Select Room</label>
+            <select asp-for="RoomId" class="form-select" required>
+                <option value="0">-- Choose a room --</option>
+                @foreach (var room in Model.AvailableRooms)
+                {
+                    <option value="@room.Id">Room @room.RoomNumber (Vacant: @room.VacantBeds)</option>
+                }
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success">Assign</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

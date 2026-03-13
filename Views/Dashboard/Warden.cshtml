@@ -1,0 +1,195 @@
+﻿@model WardenDashboardViewModel
+
+@{
+    ViewData["Title"] = "Warden Dashboard";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-5 animate__animated animate__fadeIn">
+        <h2 class="fw-bold text-success mb-0">
+            <i class="bi bi-shield-lock-fill me-3 text-success"></i>
+            Warden Operations
+        </h2>
+        <small class="text-muted">Last updated: @DateTime.Now.ToString("dd MMM yyyy HH:mm")</small>
+    </div>
+
+    <!-- Stats Cards Row -->
+    <div class="row g-4 mb-5">
+        <!-- Total Rooms -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-lg h-100 stat-card animate__animated animate__zoomIn">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-primary text-white mb-3 mx-auto">
+                        <i class="bi bi-house-door-fill fs-3"></i>
+                    </div>
+                    <h5 class="text-muted mb-1">Total Rooms</h5>
+                    <h2 class="fw-bold counter" data-count="@Model.TotalRooms">0</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Occupied Beds -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-lg h-100 stat-card animate__animated animate__zoomIn animate__delay-1s">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-danger text-white mb-3 mx-auto">
+                        <i class="bi bi-segmented-nav fs-3"></i>
+                    </div>
+                    <h5 class="text-muted mb-1">Occupied Beds</h5>
+                    <h2 class="fw-bold counter text-danger" data-count="@Model.OccupiedBeds">0</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vacant Beds -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-lg h-100 stat-card animate__animated animate__zoomIn animate__delay-2s">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-success text-white mb-3 mx-auto">
+                        <i class="bi bi-door-open-fill fs-3"></i>
+                    </div>
+                    <h5 class="text-muted mb-1">Vacant Beds</h5>
+                    <h2 class="fw-bold counter text-success" data-count="@Model.VacantBeds">0</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Complaints -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-lg h-100 stat-card animate__animated animate__zoomIn animate__delay-3s">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-warning text-dark mb-3 mx-auto">
+                        <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                    </div>
+                    <h5 class="text-muted mb-1">Pending Complaints</h5>
+                    <h2 class="fw-bold counter text-warning" data-count="@Model.PendingComplaints">0</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Almost Full Rooms Warning -->
+    @if (Model.RoomsAlmostFull.Any())
+    {
+        <div class="alert alert-warning border-warning shadow mb-5 animate__animated animate__fadeIn">
+            <h5 class="alert-heading mb-3">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                Rooms Almost Full (≤1 bed left)
+            </h5>
+            <div class="row g-3">
+                @foreach (var room in Model.RoomsAlmostFull)
+                {
+                    <div class="col-md-4 col-lg-3">
+                        <div class="card border-warning bg-warning-subtle h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title fw-bold">Room @room.RoomNumber</h5>
+                                <p class="mb-1 text-danger fw-bold">
+                                    @room.VacantBeds vacant / @room.TotalBeds total
+                                </p>
+                                <small class="text-muted">
+                                    @(room.OccupiedBeds) occupied
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Quick Actions -->
+    <div class="card border-0 shadow-lg animate__animated animate__fadeIn">
+        <div class="card-header bg-light py-3">
+            <h5 class="mb-0 fw-bold">
+                <i class="bi bi-lightning-charge-fill me-2 text-warning"></i>
+                Quick Actions
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <a asp-controller="Room" asp-action="Index" class="btn btn-primary w-100 py-4 shadow-sm action-btn">
+                        <i class="bi bi-house-door fs-3 mb-2 d-block"></i>
+                        View All Rooms
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a asp-controller="Allocation" asp-action="Index" class="btn btn-success w-100 py-4 shadow-sm action-btn">
+                        <i class="bi bi-person-check fs-3 mb-2 d-block"></i>
+                        Assign / Transfer Girls
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a asp-controller="Complaint" asp-action="Index" class="btn btn-warning w-100 py-4 shadow-sm action-btn">
+                        <i class="bi bi-exclamation-circle fs-3 mb-2 d-block"></i>
+                        Handle Complaints
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .stat-card {
+            transition: all 0.3s ease;
+            border-radius: 16px;
+            background: white;
+        }
+
+            .stat-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+            }
+
+        .icon-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            font-size: 1.1rem;
+        }
+
+            .action-btn:hover {
+                transform: scale(1.05);
+                box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+            }
+
+        .counter {
+            font-size: 2.8rem;
+            line-height: 1;
+        }
+    </style>
+}
+
+@section Scripts {
+    <!-- Animated Counter -->
+    <script>
+        document.querySelectorAll('.counter').forEach(el => {
+            const target = parseInt(el.getAttribute('data-count')) || 0;
+            let count = 0;
+            const duration = 1800;
+            const step = Math.ceil(target / (duration / 16));
+
+            const update = () => {
+                count += step;
+                if (count >= target) {
+                    el.textContent = target;
+                } else {
+                    el.textContent = count;
+                    requestAnimationFrame(update);
+                }
+            };
+            update();
+        });
+    </script>
+}

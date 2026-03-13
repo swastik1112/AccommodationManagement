@@ -39,7 +39,7 @@ A secure, role-based web application built with **ASP.NET Core MVC (.NET 8)** to
 - **Other**: Chart.js (optional), Font Awesome (optional)
 
 ## Project Structure
-GirlsAccommodationRMS/
+AccommodationManagement/
 ├── Controllers/
 │   ├── AccountController.cs
 │   ├── DashboardController.cs

@@ -16,6 +16,8 @@ namespace AccommodationManagement.Data
         // Data/ApplicationDbContext.cs
         public DbSet<Notice> Notices { get; set; }
 
+        public DbSet<EmergencyRequest> EmergencyRequests { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

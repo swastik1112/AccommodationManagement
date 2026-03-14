@@ -222,6 +222,11 @@
                             <i class="bi bi-tools me-2"></i> My Complaints
                         </a>
                     </li>
+                    <li class="nav-item"> 
+                        <a class="nav-link @(IsActive("Rules", "Index"))" asp-controller="Rules" asp-action="Index"> 
+                            <i class="bi bi-list-check me-2"></i> Hostel Rules 
+                        </a> 
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link @(IsActive("MyProfile", "Index"))" asp-controller="MyProfile" asp-action="Index">
                             <i class="bi bi-person-circle me-2"></i> My Profile

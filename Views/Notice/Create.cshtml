@@ -1,0 +1,54 @@
+﻿@model Notice
+
+@{
+    ViewData["Title"] = "Post New Notice";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">Post New Notice</h3>
+                </div>
+                <div class="card-body p-5">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+
+                        <div class="mb-4 form-floating">
+                            <input asp-for="Title" class="form-control" placeholder="Notice Title" required />
+                            <label asp-for="Title" class="form-label"></label>
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4 form-floating">
+                            <textarea asp-for="Content" class="form-control" placeholder="Notice content..." rows="8" required></textarea>
+                            <label asp-for="Content" class="form-label"></label>
+                            <span asp-validation-for="Content" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input asp-for="IsImportant" class="form-check-input" type="checkbox" />
+                            <label asp-for="IsImportant" class="form-check-label">
+                                Mark as Important / Urgent
+                            </label>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="bi bi-send-fill me-2"></i> Post Notice
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-5">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

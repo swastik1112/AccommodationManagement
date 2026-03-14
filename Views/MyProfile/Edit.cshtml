@@ -1,0 +1,209 @@
+﻿@model EditProfileViewModel
+
+@{
+    ViewData["Title"] = "Edit My Profile";
+}
+
+<div class="min-vh-100 d-flex align-items-center edit-profile-bg">
+    <!-- Animated background -->
+    <div class="bg-animation"></div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8 col-xl-7">
+                <div class="card border-0 shadow-xl profile-edit-card animate__animated animate__fadeInUp">
+                    <div class="card-header text-center py-5 bg-gradient-primary text-white position-relative">
+                        <div class="avatar-circle mx-auto mb-4">
+                            <i class="bi bi-pencil-square fs-1"></i>
+                        </div>
+                        <h3 class="mb-1 fw-bold">Edit My Profile</h3>
+                        <p class="mb-0 opacity-85">Update your contact & emergency details</p>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        <form asp-action="Edit" method="post" id="editProfileForm">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-5" role="alert"></div>
+
+                            <div class="row g-4">
+                                <!-- Read-only fields -->
+                                <div class="col-md-6 form-floating">
+                                    <input asp-for="FullName" class="form-control bg-light" readonly />
+                                    <label asp-for="FullName" class="form-label">Full Name</label>
+                                </div>
+
+                                <div class="col-md-6 form-floating">
+                                    <input asp-for="Email" class="form-control bg-light" readonly />
+                                    <label asp-for="Email" class="form-label">Email Address</label>
+                                </div>
+
+                                <!-- Editable fields -->
+                                <div class="col-md-6 form-floating">
+                                    <input asp-for="Phone" class="form-control" placeholder=" " required />
+                                    <label asp-for="Phone" class="form-label">Phone Number</label>
+                                    <span asp-validation-for="Phone" class="text-danger small"></span>
+                                    <div class="form-text text-muted small mt-1">
+                                        Preferred contact number (include country code if international)
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-floating">
+                                    <input asp-for="EmergencyContact" class="form-control" placeholder=" " />
+                                    <label asp-for="EmergencyContact" class="form-label">Emergency Contact</label>
+                                    <span asp-validation-for="EmergencyContact" class="text-danger small"></span>
+                                    <div class="form-text text-muted small mt-1">
+                                        Family member or trusted person's number
+                                    </div>
+                                </div>
+
+                                <!-- Read-only accommodation info -->
+                                <div class="col-md-6 form-floating">
+                                    <input asp-for="RoomNumber" class="form-control bg-light" readonly />
+                                    <label asp-for="RoomNumber" class="form-label">Room Number</label>
+                                    <div class="form-text text-muted small mt-1">
+                                        Assigned by Warden/Admin (cannot change)
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-floating">
+                                    <input asp-for="BedNumber" class="form-control bg-light" readonly />
+                                    <label asp-for="BedNumber" class="form-label">Bed Number</label>
+                                    <div class="form-text text-muted small mt-1">
+                                        Your allocated bed in the room
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-floating">
+                                    <input asp-for="JoinDate" class="form-control bg-light" readonly />
+                                    <label asp-for="JoinDate" class="form-label">Joined On</label>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="mt-5 text-center d-grid gap-3 d-md-flex justify-content-md-center">
+                                <button type="submit" class="btn btn-primary btn-lg px-5 fw-bold shadow" id="submitBtn">
+                                    <span class="spinner-border spinner-border-sm d-none me-2" role="status" id="loadingSpinner"></span>
+                                    <i class="bi bi-save-fill me-2"></i> Save Changes
+                                </button>
+
+                                <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-5">
+                                    <i class="bi bi-arrow-left me-2"></i> Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card-footer bg-light text-center py-3">
+                        <small class="text-muted">
+                            Changes saved instantly • Profile last updated: @DateTime.Now.ToString("dd MMM yyyy HH:mm")
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .edit-profile-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bg-animation {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.12) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.08) 0%, transparent 50%);
+            animation: floatBg 28s infinite alternate ease-in-out;
+            pointer-events: none;
+        }
+
+        @@keyframes floatBg {
+            0%
+
+        {
+            transform: translate(0, 0) scale(1);
+        }
+
+        100% {
+            transform: translate(60px, -60px) scale(1.1);
+        }
+
+        }
+
+        .profile-edit-card {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.3);
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+            .profile-edit-card:hover {
+                transform: translateY(-12px);
+                box-shadow: 0 40px 80px -20px rgba(0,0,0,0.45) !important;
+            }
+
+        .bg-gradient-primary {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .avatar-circle {
+            width: 140px;
+            height: 140px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 6px solid white;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.35);
+        }
+
+        .form-floating > label {
+            color: #555;
+        }
+
+        .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            color: #667eea !important;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+            }
+
+        .form-text {
+            font-size: 0.9rem;
+        }
+    </style>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('editProfileForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const spinner = document.getElementById('loadingSpinner');
+
+            // Show loading state on submit
+            form.addEventListener('submit', function () {
+                submitBtn.disabled = true;
+                spinner.classList.remove('d-none');
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Saving...';
+            });
+        });
+    </script>
+}

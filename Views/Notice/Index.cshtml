@@ -1,0 +1,72 @@
+﻿@model IEnumerable<Notice>
+
+@{
+    ViewData["Title"] = "Notices";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">
+            <i class="bi bi-megaphone-fill me-2"></i>
+            Manage Notices
+        </h2>
+        <a asp-action="Create" class="btn btn-success shadow-sm">
+            <i class="bi bi-plus-lg me-2"></i> Post New Notice
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center py-5">
+            <i class="bi bi-megaphone display-1 mb-3 opacity-50"></i>
+            <h4>No notices posted yet</h4>
+            <p class="lead">Click "Post New Notice" to add one.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var notice in Model)
+            {
+                var cardClass = notice.IsImportant ? "border-danger bg-danger-subtle" : "border-info bg-info-subtle";
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm @cardClass animate__animated animate__fadeIn">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">@notice.Title</h5>
+                            @if (notice.IsImportant)
+                            {
+                                <span class="badge bg-danger mb-2">IMPORTANT</span>
+                            }
+                            <p class="card-text">@notice.Content</p>
+                            <small class="text-muted">
+                                Posted by @notice.PostedBy on @notice.PostedDate.ToString("dd MMM yyyy HH:mm")
+                            </small>
+                        </div>
+                        <div class="card-footer bg-transparent border-0">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a asp-action="Edit" asp-route-id="@notice.Id" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                                <form asp-action="Delete" asp-route-id="@notice.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this notice?');">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

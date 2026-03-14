@@ -1,0 +1,171 @@
+﻿@model ApplicationUser
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container-fluid py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-8">
+            <div class="card border-0 shadow-xl profile-card animate__animated animate__fadeInUp">
+                <div class="card-header bg-gradient-primary text-white text-center py-5 position-relative">
+                    <div class="avatar-circle mx-auto mb-4">
+                        <i class="bi bi-person-fill fs-1"></i>
+                    </div>
+                    <h2 class="mb-1 fw-bold">@Model.FullName</h2>
+                    <p class="mb-0 fs-5 opacity-90">@Model.Email</p>
+                </div>
+
+                <div class="card-body p-5">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                            @TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <div class="row g-5">
+                        <!-- Personal Information -->
+                        <div class="col-md-6">
+                            <h5 class="text-primary mb-4 fw-bold">
+                                <i class="bi bi-person-badge-fill me-2"></i> Personal Information
+                            </h5>
+
+                            <div class="info-item mb-4">
+                                <span class="info-label">Full Name</span>
+                                <span class="info-value">@Model.FullName</span>
+                            </div>
+
+                            <div class="info-item mb-4">
+                                <span class="info-label">Email</span>
+                                <span class="info-value">@Model.Email</span>
+                            </div>
+
+                            <div class="info-item mb-4">
+                                <span class="info-label">Phone Number</span>
+                                <span class="info-value">@(Model.Phone ?? "<span class='text-muted'>Not provided</span>")</span>
+                            </div>
+
+                            <div class="info-item mb-4">
+                                <span class="info-label">Emergency Contact</span>
+                                <span class="info-value">@(Model.EmergencyContact ?? "<span class='text-muted'>Not set</span>")</span>
+                            </div>
+
+                            <div class="info-item">
+                                <span class="info-label">Joined On</span>
+                                <span class="info-value">@Model.CreatedDate.ToString("dd MMMM yyyy")</span>
+                            </div>
+                        </div>
+
+                        <!-- Accommodation Information -->
+                        <div class="col-md-6">
+                            <h5 class="text-primary mb-4 fw-bold">
+                                <i class="bi bi-house-door-fill me-2"></i> Accommodation Details
+                            </h5>
+
+                            @if (Model.Room == null)
+                            {
+                                <div class="alert alert-warning text-center py-4">
+                                    <i class="bi bi-house-slash display-5 mb-3 d-block"></i>
+                                    <h5 class="mb-2">No Room Assigned Yet</h5>
+                                    <p class="mb-0">Contact your Warden or Admin to get allocated a room.</p>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="info-item mb-4">
+                                    <span class="info-label">Room Number</span>
+                                    <span class="info-value badge bg-info fs-6 px-3 py-2">
+                                        Room @Model.Room.RoomNumber
+                                    </span>
+                                </div>
+
+                                <div class="info-item mb-4">
+                                    <span class="info-label">Bed Number</span>
+                                    <span class="info-value badge bg-secondary fs-6 px-3 py-2">
+                                        @ViewBag.MyBedNumber
+                                    </span>
+                                </div>
+
+                                <div class="info-item">
+                                    <span class="info-label">Roommates</span>
+                                    <span class="info-value">
+                                        @(Model.Room.Beds.Count(b => b.IsOccupied && b.Allocation?.UserId != Model.Id) - 1) other @(Model.Room.Beds.Count(b => b.IsOccupied && b.Allocation?.UserId != Model.Id) - 1 == 1 ? "girl" : "girls")
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="text-center mt-5">
+                        <a asp-action="Edit" class="btn btn-primary btn-lg px-5 shadow">
+                            <i class="bi bi-pencil-square me-2"></i> Edit Profile
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light text-center py-3">
+                    <small class="text-muted">
+                        Profile ID: @Model.Id • Last updated: @DateTime.Now.ToString("dd MMM yyyy HH:mm")
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .profile-card {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.25);
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+            .profile-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 35px 70px -15px rgba(0,0,0,0.4) !important;
+            }
+
+        .bg-gradient-primary {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .avatar-circle {
+            width: 140px;
+            height: 140px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 5px solid white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+            min-width: 160px;
+        }
+
+        .info-value {
+            flex: 1;
+            text-align: right;
+            font-weight: 500;
+        }
+    </style>
+}

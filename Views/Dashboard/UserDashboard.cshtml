@@ -2,11 +2,12 @@
 
 @{
     ViewData["Title"] = "My Dashboard";
+    var notices = ViewBag.LatestNotices as IEnumerable<Notice> ?? Enumerable.Empty<Notice>();
 }
 
 <div class="container-fluid py-4">
     <!-- Welcome Header -->
-    <div class="d-flex justify-content-between align-items-center mb-5 animate__animated animate__fadeIn">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 gap-3 animate__animated animate__fadeIn">
         <div>
             <h2 class="fw-bold text-primary mb-1">
                 <i class="bi bi-person-circle me-3 text-primary"></i>
@@ -19,16 +20,15 @@
 
     @if (!Model.HasRoom)
     {
-        <!-- Empty State – No Room Assigned -->
-        <div class="card border-0 shadow-lg bg-warning-subtle animate__animated animate__fadeIn">
-            <div class="card-body text-center py-5">
+        <!-- No Room Assigned -->
+        <div class="card border-0 shadow-xl bg-warning-subtle text-center py-5 animate__animated animate__fadeIn">
+            <div class="card-body">
                 <i class="bi bi-house-slash display-1 text-warning mb-4 opacity-75"></i>
                 <h4 class="text-warning mb-3">No Room Assigned Yet</h4>
                 <p class="lead text-muted mb-4">
-                    You haven't been allocated a room. Please contact your Warden or Admin for assistance.
+                    You haven't been allocated a room or bed. Please contact your Warden or Admin.
                 </p>
                 <a asp-controller="Complaint" asp-action="Create" class="btn btn-outline-warning btn-lg px-5">
-                    <i class="bi bi-exclamation-circle me-2"></i>
                     Raise a Request
                 </a>
             </div>
@@ -36,9 +36,8 @@
     }
     else
     {
-        <!-- Room & Bed Info Cards -->
+        <!-- Room & Bed Cards -->
         <div class="row g-4 mb-5">
-            <!-- Your Room Card -->
             <div class="col-lg-6">
                 <div class="card border-0 shadow-lg h-100 stat-card bg-info text-white animate__animated animate__zoomIn">
                     <div class="card-body text-center p-5">
@@ -52,18 +51,64 @@
                 </div>
             </div>
 
-            <!-- Your Bed Card -->
             <div class="col-lg-6">
                 <div class="card border-0 shadow-lg h-100 stat-card bg-success text-white animate__animated animate__zoomIn animate__delay-1s">
                     <div class="card-body text-center p-5">
                         <div class="icon-circle bg-white text-success mb-4 mx-auto">
-                            <i class="bi bi-segmented-nav fs-1"></i>
+                            <i class="bi bi-bed-fill fs-1"></i>
                         </div>
                         <h5 class="mb-2 opacity-90">Your Bed</h5>
                         <h1 class="display-4 fw-bold mb-0">Bed @Model.BedNumber</h1>
                         <small class="opacity-75">Your private spot</small>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Latest Notices Widget -->
+        <div class="card border-0 shadow-lg mb-5 animate__animated animate__fadeIn">
+            <div class="card-header bg-info text-white py-3">
+                <h5 class="mb-0 fw-bold">
+                    <i class="bi bi-megaphone-fill me-2"></i>
+                    Latest Notices & Announcements
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                @if (!notices.Any())
+                {
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-megaphone display-4 mb-3 opacity-50"></i>
+                        <h5>No new notices at the moment</h5>
+                    </div>
+                }
+                else
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var notice in notices)
+                        {
+                            <div class="list-group-item list-group-item-action px-4 py-3">
+                                <div class="d-flex w-100 justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1 fw-bold @(notice.IsImportant ? "text-danger" : "")">
+                                            @notice.Title
+                                            @if (notice.IsImportant)
+                                            {
+                                                <span class="badge bg-danger ms-2">IMPORTANT</span>
+                                            }
+                                        </h6>
+                                        <p class="mb-1 text-truncate" style="max-width: 90%;">
+                                            @notice.Content
+                                        </p>
+                                    </div>
+                                    <small class="text-muted text-nowrap ms-3">
+                                        @notice.PostedDate.ToString("dd MMM HH:mm")
+                                    </small>
+                                </div>
+                                <small class="text-muted">Posted by @notice.PostedBy</small>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
         </div>
 
@@ -111,13 +156,13 @@
 
 @section Styles {
     <style>
-        .stat-card {
+        .stat-card, .card {
             transition: all 0.3s ease;
             border-radius: 20px;
             background: white;
         }
 
-            .stat-card:hover {
+            .stat-card:hover, .card:hover {
                 transform: translateY(-10px);
                 box-shadow: 0 25px 50px rgba(0,0,0,0.15) !important;
             }
@@ -143,116 +188,5 @@
                 transform: scale(1.05);
                 box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             }
-
-            .action-btn::after {
-                content: '';
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                width: 0;
-                height: 0;
-                background: rgba(255,255,255,0.2);
-                border-radius: 50%;
-                transform: translate(-50%, -50%);
-                transition: width 0.6s ease, height 0.6s ease;
-                pointer-events: none;
-            }
-
-            .action-btn:active::after {
-                width: 200px;
-                height: 200px;
-                opacity: 0;
-            }
-    </style>
-}
-
-@section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // ────────────────────────────────────────────────
-            // Animated Counter for Pending Complaints Badge
-            // ────────────────────────────────────────────────
-            const pendingBadge = document.querySelector('.pending-complaints-badge');
-            if (pendingBadge) {
-                const target = parseInt(pendingBadge.textContent.trim()) || 0;
-                if (target > 0) {
-                    let count = 0;
-                    const duration = 1200; // milliseconds
-                    const step = Math.ceil(target / (duration / 16));
-
-                    const update = () => {
-                        count += step;
-                        if (count >= target) {
-                            pendingBadge.textContent = target;
-                            pendingBadge.classList.add('animate__animated', 'animate__pulse');
-                        } else {
-                            pendingBadge.textContent = count;
-                            requestAnimationFrame(update);
-                        }
-                    };
-                    update();
-                }
-            }
-
-            // ────────────────────────────────────────────────
-            // Button Ripple/Hover Animation (optional enhancement)
-            // ────────────────────────────────────────────────
-            const actionButtons = document.querySelectorAll('.action-btn');
-            actionButtons.forEach(btn => {
-                btn.addEventListener('click', function (e) {
-                    const ripple = document.createElement('span');
-                    const rect = btn.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-
-                    ripple.classList.add('ripple-effect');
-                    ripple.style.left = x + 'px';
-                    ripple.style.top = y + 'px';
-
-                    btn.appendChild(ripple);
-
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 600);
-                });
-            });
-
-            // ────────────────────────────────────────────────
-            // Smooth scroll to top on page load (optional)
-            // ────────────────────────────────────────────────
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    </script>
-
-    <style>
-        /* Ripple effect on button click */
-        .action-btn {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .ripple-effect {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.35);
-            transform: scale(0);
-            animation: ripple 0.6s linear;
-            pointer-events: none;
-        }
-
-        @@keyframes ripple {
-            to
-
-        {
-            transform: scale(4);
-            opacity: 0;
-        }
-
-        }
-
-        /* Pulse animation for pending badge when > 0 */
-        .pending-complaints-badge {
-            transition: all 0.3s ease;
-        }
     </style>
 }

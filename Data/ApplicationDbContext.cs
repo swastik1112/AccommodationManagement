@@ -13,6 +13,8 @@ namespace AccommodationManagement.Data
         public DbSet<Bed> Beds { get; set; }
         public DbSet<RoomAllocation> RoomAllocations { get; set; }
         public DbSet<Complaint> Complaints { get; set; }
+        // Data/ApplicationDbContext.cs
+        public DbSet<Notice> Notices { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

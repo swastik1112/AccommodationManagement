@@ -83,12 +83,11 @@ namespace AccommodationManagement.Controllers
         // USER DASHBOARD (Girl Employee)
         // ────────────────────────────────────────────────
         [Authorize(Roles = "User")]
-        public async Task<IActionResult> UserDashboard()   // ← renamed from User() to avoid confusion
+        public async Task<IActionResult> UserDashboard()
         {
             var currentUser = await _userManager.GetUserAsync(User);
-
             if (currentUser == null)
-                return RedirectToAction("Index", "Account"); // or error
+                return RedirectToAction("Index", "Account");
 
             var allocation = await _context.RoomAllocations
                 .Include(a => a.Bed)
@@ -103,6 +102,12 @@ namespace AccommodationManagement.Controllers
                 PendingComplaintsCount = await _context.Complaints
                     .CountAsync(c => c.UserId == currentUser.Id && c.Status == "Pending")
             };
+
+            // Pass latest 5 notices to the view
+            ViewBag.LatestNotices = await _context.Notices
+                .OrderByDescending(n => n.PostedDate)
+                .Take(5)
+                .ToListAsync();
 
             return View(model);
         }

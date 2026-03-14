@@ -20,11 +20,11 @@ namespace AccommodationManagement.Controllers
             return View(rooms);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Warden")]
         public IActionResult Create() => View();
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Warden")]
         public async Task<IActionResult> Create(Room room)
         {
             if (ModelState.IsValid)

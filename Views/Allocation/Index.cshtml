@@ -1,67 +1,152 @@
 ﻿@model IEnumerable<RoomAllocation>
 
 @{
-    ViewData["Title"] = "Allocations";
+    ViewData["Title"] = "Room Allocations";
 }
 
-<div class="container-fluid mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Current Room Allocations</h2>
-        <a asp-action="Assign" class="btn btn-success">
-            <i class="bi bi-plus-lg"></i> Assign New Girl
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 gap-3 animate__animated animate__fadeIn">
+        <h2 class="fw-bold text-primary mb-0">
+            <i class="bi bi-people-fill me-3 text-primary"></i>
+            Current Room Allocations
+        </h2>
+
+        <a asp-action="Assign" class="btn btn-success btn-lg shadow-sm animate__animated animate__pulse animate__infinite">
+            <i class="bi bi-plus-lg me-2"></i> Assign New Girl
         </a>
     </div>
 
+    <!-- Success Message -->
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show">
-            @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="alert alert-success alert-dismissible fade show shadow animate__animated animate__fadeIn" role="alert">
+            <strong>Success!</strong> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
+    <!-- Empty State -->
     @if (!Model.Any())
     {
-        <div class="alert alert-info text-center py-5">
-            No allocations yet. Click "Assign New Girl" to begin.
+        <div class="card border-0 shadow-lg text-center py-5 animate__animated animate__fadeIn">
+            <div class="card-body">
+                <i class="bi bi-calendar-x display-1 text-muted mb-4 opacity-75"></i>
+                <h4 class="text-muted mb-3">No Allocations Yet</h4>
+                <p class="lead text-muted mb-4">
+                    No girls have been assigned rooms yet.<br>
+                    Click the button above to start allocating.
+                </p>
+                <a asp-action="Assign" class="btn btn-outline-primary btn-lg px-5">
+                    Assign First Girl
+                </a>
+            </div>
         </div>
     }
     else
     {
-        <div class="table-responsive">
-            <table class="table table-hover table-bordered align-middle">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Girl Name</th>
-                        <th>Room</th>
-                        <th>Bed</th>
-                        <th>Allocated On</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var alloc in Model)
-                    {
-                        <tr>
-                            <td>@alloc.User?.FullName</td>
-                            <td>Room @alloc.Room?.RoomNumber</td>
-                            <td>@alloc.Bed?.BedNumber</td>
-                            <td>@alloc.AllocationDate.ToString("dd MMM yyyy HH:mm")</td>
-                            <td>
-                                <a asp-action="Transfer" asp-route-userId="@alloc.UserId"
-                                   class="btn btn-sm btn-warning">Transfer</a>
-                                <form asp-action="Remove" asp-route-userId="@alloc.UserId" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Remove @alloc.User?.FullName from this room?');">
-                                        Remove
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <!-- Allocations Table -->
+        <div class="card border-0 shadow-lg animate__animated animate__fadeIn">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">Girl Name</th>
+                                <th scope="col">Room</th>
+                                <th scope="col">Bed</th>
+                                <th scope="col">Allocated On</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var alloc in Model)
+                            {
+                                <tr class="animate__animated animate__fadeIn animate__delay-1s">
+                                    <td class="fw-bold">
+                                        @alloc.User?.FullName
+                                        <small class="text-muted d-block">(@alloc.User?.Email)</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info fs-6 px-3 py-2">
+                                            Room @alloc.Room?.RoomNumber
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary fs-6 px-3 py-2">
+                                            @alloc.Bed?.BedNumber
+                                        </span>
+                                    </td>
+                                    <td>@alloc.AllocationDate.ToString("dd MMM yyyy HH:mm")</td>
+                                    <td>
+                                        <div class="d-flex gap-2 flex-wrap justify-content-center">
+                                            <a asp-action="Transfer" asp-route-userId="@alloc.UserId"
+                                               class="btn btn-sm btn-warning text-white">
+                                                <i class="bi bi-arrow-left-right"></i> Transfer
+                                            </a>
+
+                                            <form asp-action="Remove" asp-route-userId="@alloc.UserId" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                        onclick="return confirm('Are you sure you want to remove @alloc.User?.FullName from Room @alloc.Room?.RoomNumber?');">
+                                                    <i class="bi bi-trash"></i> Remove
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Table Footer Summary -->
+            <div class="card-footer bg-light text-center py-3">
+                <small class="text-muted">
+                    Showing @Model.Count() allocation@(Model.Count() == 1 ? "" : "s") •
+                    Last updated: @DateTime.Now.ToString("dd MMM yyyy HH:mm")
+                </small>
+            </div>
         </div>
     }
 </div>
+
+@section Styles {
+    <style>
+        .table-hover tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.08);
+            transition: background-color 0.2s ease;
+        }
+
+        .card {
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+            }
+
+        .btn-warning, .btn-danger {
+            transition: all 0.3s ease;
+        }
+
+            .btn-warning:hover, .btn-danger:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Optional: Add tooltip support for long names/emails if needed
+        document.addEventListener('DOMContentLoaded', function () {
+            const tooltipTriggerList = document.querySelectorAll('[title]');
+            [...tooltipTriggerList].forEach(el => new bootstrap.Tooltip(el));
+        });
+    </script>
+}

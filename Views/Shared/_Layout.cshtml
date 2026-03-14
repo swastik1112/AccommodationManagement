@@ -284,5 +284,7 @@
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
+    @Html.AntiForgeryToken()
 </body>
 </html>

@@ -4,47 +4,136 @@
     ViewData["Title"] = "My Complaints";
 }
 
-<div class="container-fluid">
-    <h2 class="mb-4">My Maintenance Complaints</h2>
+<div class="container-fluid py-4">
+    <!-- Header with Action Button -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 gap-3 animate__animated animate__fadeIn">
+        <h2 class="fw-bold text-primary mb-0">
+            <i class="bi bi-tools me-3 text-primary"></i>
+            My Maintenance Complaints
+        </h2>
 
-    <a asp-action="Create" class="btn btn-success mb-3">
-        <i class="bi bi-plus-lg"></i> Submit New Complaint
-    </a>
+        <a asp-action="Create" class="btn btn-success btn-lg shadow-sm animate__animated animate__pulse animate__infinite">
+            <i class="bi bi-plus-lg me-2"></i> Submit New Complaint
+        </a>
+    </div>
 
+    <!-- Empty State -->
     @if (!Model.Any())
     {
-        <div class="alert alert-info">You haven't submitted any complaints yet.</div>
+        <div class="card border-0 shadow-lg bg-light text-center py-5 animate__animated animate__fadeIn">
+            <div class="card-body">
+                <i class="bi bi-chat-square-text display-1 text-muted mb-4 opacity-75"></i>
+                <h4 class="text-muted mb-3">No Complaints Yet</h4>
+                <p class="lead text-muted mb-4">
+                    You haven't raised any maintenance requests.<br>
+                    Click the button above to submit one if something needs attention.
+                </p>
+                <a asp-action="Create" class="btn btn-outline-primary btn-lg px-5">
+                    Raise Your First Complaint
+                </a>
+            </div>
+        </div>
     }
     else
     {
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@item.Title</td>
-                            <td>@item.Date.ToShortDateString()</td>
-                            <td>
-                                <span class="badge bg-@(item.Status == "Resolved" ? "success" : "warning")">
-                                    @item.Status
-                                </span>
-                            </td>
-                            <td>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary">View</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <!-- Complaints Table -->
+        <div class="card border-0 shadow-lg animate__animated animate__fadeIn">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">Sr.No.</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Submitted On</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ int index = 1; }
+                            @foreach (var item in Model)
+                            {
+                                var statusClass = item.Status switch
+                                {
+                                    "Pending" => "bg-warning text-dark",
+                                    "InProgress" => "bg-info text-white",
+                                    "Resolved" => "bg-success text-white",
+                                    _ => "bg-secondary text-white"
+                                };
+
+                                <tr>
+                                    <td class="text-center fw-bold">@index</td>
+                                    <td class="fw-bold">@item.Title</td>
+                                    <td>
+                                        <div class="text-truncate" style="max-width: 340px;" 
+                                             title="@item.Description">
+                                            @item.Description
+                                        </div>
+                                    </td>
+                                    <td>@item.Date.ToString("dd MMM yyyy")</td>
+                                    <td>
+                                        <span class="badge @statusClass px-3 py-2 fs-6">
+                                            @item.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a asp-action="Details" asp-route-id="@item.Id" 
+                                           class="btn btn-sm btn-primary text-white">
+                                            <i class="bi bi-eye"></i> View Details
+                                        </a>
+                                    </td>
+                                </tr>
+                                index++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Footer -->
+        <div class="text-center mt-4 text-muted small animate__animated animate__fadeIn">
+            Showing @Model.Count() complaint@(Model.Count() == 1 ? "" : "s") • 
+            Last updated: @DateTime.Now.ToString("dd MMM yyyy HH:mm")
         </div>
     }
 </div>
+
+@section Styles {
+    <style>
+        .table-hover tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.08);
+            transition: background-color 0.2s ease;
+        }
+
+        .card {
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+        }
+
+        .text-truncate {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Optional: Enable Bootstrap tooltips for truncated descriptions
+            const tooltipTriggerList = document.querySelectorAll('[title]');
+            [...tooltipTriggerList].forEach(el => new bootstrap.Tooltip(el));
+        });
+    </script>
+}

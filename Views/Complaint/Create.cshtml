@@ -1,22 +1,136 @@
 ﻿@model Complaint
 
 @{
-    ViewData["Title"] = "Submit Complaint";
+    ViewData["Title"] = "Submit Maintenance Complaint";
 }
 
-<h2>Submit Maintenance Request / Complaint</h2>
+<div class="container-fluid py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8 col-xl-7">
+            <!-- Card with glassmorphism + animation -->
+            <div class="card border-0 shadow-xl animate__animated animate__fadeInUp complaint-card">
+                <div class="card-header bg-gradient-primary text-white text-center py-4">
+                    <h3 class="mb-1 fw-bold">
+                        <i class="bi bi-tools me-3"></i>
+                        Submit Maintenance Complaint
+                    </h3>
+                    <p class="mb-0 opacity-85">
+                        Describe the issue clearly — our team will respond promptly.
+                    </p>
+                </div>
 
-<form asp-action="Create" method="post">
-    <div class="mb-3">
-        <label asp-for="Title" class="form-label">Title</label>
-        <input asp-for="Title" class="form-control" required />
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="Create" method="post" id="complaintForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" role="alert"></div>
+
+                        <!-- Title -->
+                        <div class="mb-4 form-floating">
+                            <input asp-for="Title" class="form-control" placeholder="e.g. Fan not working in room" maxlength="150" required autofocus />
+                            <label asp-for="Title" class="form-label"></label>
+                            <div class="form-text text-muted small">
+                                Keep it short and clear (max 150 characters)
+                            </div>
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-5 form-floating">
+                            <textarea asp-for="Description" class="form-control" placeholder="Describe the issue in detail..." rows="6" required></textarea>
+                            <label asp-for="Description" class="form-label"></label>
+                            <div class="form-text text-muted small mt-1">
+                                Please include room number, bed number (if relevant), and any specific details.
+                            </div>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <!-- Submit & Cancel -->
+                        <div class="d-grid gap-3 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary btn-lg px-5 fw-bold shadow" id="submitBtn">
+                                <span class="spinner-border spinner-border-sm d-none me-2" role="status" id="loadingSpinner"></span>
+                                <i class="bi bi-send-fill me-2"></i> Submit Complaint
+                            </button>
+
+                            <a asp-action="MyComplaints" class="btn btn-outline-secondary btn-lg px-5">
+                                <i class="bi bi-arrow-left me-2"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Footer note -->
+                <div class="card-footer bg-light text-center py-3">
+                    <small class="text-muted">
+                        All complaints are reviewed within 24–48 hours. Thank you for helping us improve!
+                    </small>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div class="mb-3">
-        <label asp-for="Description" class="form-label">Description</label>
-        <textarea asp-for="Description" class="form-control" rows="5" required></textarea>
-    </div>
+@section Styles {
+    <style>
+        .complaint-card {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
 
-    <button type="submit" class="btn btn-primary">Submit Complaint</button>
-    <a asp-action="MyComplaints" class="btn btn-secondary">Cancel</a>
-</form>
+            .complaint-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.35) !important;
+            }
+
+        .bg-gradient-primary {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .form-control:focus, .form-control:focus-visible {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 12px 30px rgba(102, 126, 234, 0.45);
+            }
+
+        .form-floating > label {
+            color: #555;
+        }
+
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            color: #667eea;
+        }
+    </style>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('complaintForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const spinner = document.getElementById('loadingSpinner');
+
+            // Show loading state on submit
+            form.addEventListener('submit', function () {
+                submitBtn.disabled = true;
+                spinner.classList.remove('d-none');
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Submitting...';
+            });
+        });
+    </script>
+}

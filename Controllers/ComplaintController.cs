@@ -101,6 +101,7 @@ namespace AccommodationManagement.Controllers
         }
 
         // GET: View single complaint details
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -110,6 +111,10 @@ namespace AccommodationManagement.Controllers
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (complaint == null) return NotFound();
+
+            // Optional: Only allow user to view their own complaint
+            if (complaint.UserId != _userManager.GetUserId(User))
+                return Forbid();
 
             return View(complaint);
         }

@@ -1,24 +1,30 @@
 ﻿@model IEnumerable<Complaint>
 
 @{
-    ViewData["Title"] = "Manage Complaints (Admin)";
+    ViewData["Title"] = "Manage Complaints";
     var statusFilter = ViewBag.StatusFilter as string ?? "All";
     var search = ViewBag.Search as string ?? "";
+    var isAdmin = User.IsInRole("Admin");
 }
 
-<div class="container-fluid mt-4">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
-        <h2 class="mb-0">
-            <i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i>
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 gap-3 animate__animated animate__fadeIn">
+        <h2 class="fw-bold text-primary mb-0">
+            <i class="bi bi-exclamation-triangle-fill me-3 text-warning"></i>
             Manage All Complaints
         </h2>
-        <div class="d-flex gap-2 flex-wrap">
-            <div class="input-group" style="max-width: 300px;">
-                <input type="text" id="searchInput" class="form-control" placeholder="Search by title or name..." value="@search">
+
+        <div class="d-flex gap-3 flex-wrap">
+            <!-- Search -->
+            <div class="input-group" style="min-width: 280px;">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search title, name or email..." value="@search">
                 <button class="btn btn-outline-primary" type="button" onclick="applyFilter()">
                     <i class="bi bi-search"></i>
                 </button>
             </div>
+
+            <!-- Status Filter -->
             <select id="statusFilter" class="form-select" style="max-width: 200px;" onchange="applyFilter()">
                 <option value="All" selected="@(statusFilter == "All")">All Status</option>
                 <option value="Pending" selected="@(statusFilter == "Pending")">Pending</option>
@@ -28,32 +34,41 @@
         </div>
     </div>
 
+    <!-- Empty State -->
     @if (!Model.Any())
     {
-        <div class="alert alert-info text-center py-5 shadow-sm">
-            <i class="bi bi-check-circle-fill display-4 d-block mb-3 text-success opacity-75"></i>
-            <h4>No complaints found</h4>
-            <p class="text-muted">All complaints are resolved or no complaints exist yet.</p>
+        <div class="card border-0 shadow-lg text-center py-5 animate__animated animate__fadeIn">
+            <div class="card-body">
+                <i class="bi bi-check-circle-fill display-1 text-success mb-4 opacity-75"></i>
+                <h4 class="text-muted mb-3">No Complaints Found</h4>
+                <p class="lead text-muted mb-4">
+                    @(statusFilter == "All" ? "No complaints exist yet." : $"No complaints in '{statusFilter}' status.")
+                </p>
+            </div>
         </div>
     }
     else
     {
-        <div class="card shadow border-0">
+        <!-- Complaints Table -->
+        <div class="card border-0 shadow-lg animate__animated animate__fadeIn">
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover table-bordered mb-0 align-middle">
+                    <table class="table table-hover table-bordered align-middle mb-0">
                         <thead class="table-dark">
                             <tr>
-                                <th>#</th>
-                                <th>Title</th>
-                                <th>User</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th scope="col">Sr.No.</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Submitted By</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @{ int index = 1; }
+                            @{
+                                int index = 1;
+                            }
                             @foreach (var complaint in Model)
                             {
                                 var statusClass = complaint.Status switch
@@ -65,9 +80,17 @@
                                 };
 
                                 <tr>
-                                    <td>@index</td>
+                                    <td class="text-center fw-bold">@index</td>
                                     <td class="fw-bold">@complaint.Title</td>
-                                    <td>@complaint.User?.FullName <small class="text-muted">(@complaint.User?.Email)</small></td>
+                                    <td>
+                                        <div class="text-truncate" style="max-width: 300px;" title="@complaint.Description">
+                                            @complaint.Description
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @complaint.User?.FullName
+                                        <small class="text-muted d-block">(@complaint.User?.Email)</small>
+                                    </td>
                                     <td>@complaint.Date.ToString("dd MMM yyyy HH:mm")</td>
                                     <td>
                                         <span class="badge @statusClass px-3 py-2 fs-6">
@@ -76,23 +99,26 @@
                                     </td>
                                     <td>
                                         <div class="d-flex gap-2 flex-wrap justify-content-center">
+                                            <!-- View Details Button -->
                                             <button class="btn btn-sm btn-info text-white view-details"
                                                     data-id="@complaint.Id"
                                                     data-title="@complaint.Title"
-                                                    data-user="@complaint.User?.FullName"
+                                                    data-user="@(complaint.User?.FullName ?? "Unknown")"
+                                                    data-email="@(complaint.User?.Email ?? "N/A")"
                                                     data-date="@complaint.Date.ToString("dd MMM yyyy HH:mm")"
                                                     data-status="@complaint.Status"
                                                     data-desc="@complaint.Description">
                                                 <i class="bi bi-eye"></i> View
                                             </button>
 
+                                            <!-- Status Change Dropdown (only if not Resolved) -->
                                             @if (complaint.Status != "Resolved")
                                             {
-                                                <select class="form-select form-select-sm status-change" style="width: auto;"
-                                                        data-id="@complaint.Id">
-                                                    <option value="Pending" asp-selected="@(complaint.Status == "Pending")">Pending</option>
-                                                    <option value="InProgress" asp-selected="@(complaint.Status == "InProgress")">In Progress</option>
-                                                    <option value="Resolved" asp-selected="@(complaint.Status == "Resolved")">Resolved</option>
+                                                <select class="form-select form-select-sm status-change" style="width: auto; min-width: 140px;"
+                                                        data-id="@complaint.Id" data-current-status="@complaint.Status">
+                                                    <option value="Pending" selected="@(complaint.Status == "Pending")">Pending</option>
+                                                    <option value="InProgress" selected="@(complaint.Status == "InProgress")">In Progress</option>
+                                                    <option value="Resolved" selected="@(complaint.Status == "Resolved")">Resolved</option>
                                                 </select>
                                             }
                                         </div>
@@ -118,12 +144,14 @@
             </div>
             <div class="modal-body">
                 <h5 id="modalTitle" class="mb-3"></h5>
-                <p><strong>Submitted by:</strong> <span id="modalUser"></span></p>
+                <p><strong>Submitted by:</strong> <span id="modalUser"></span> <small id="modalEmail"></small></p>
                 <p><strong>Date:</strong> <span id="modalDate"></span></p>
                 <p><strong>Status:</strong> <span id="modalStatus" class="badge fs-6 px-3 py-2"></span></p>
                 <hr>
                 <h6>Description:</h6>
-                <p id="modalDesc" class="bg-light p-3 rounded"></p>
+                <div class="bg-light p-4 rounded border">
+                    <p id="modalDesc" class="mb-0" style="white-space: pre-wrap;"></p>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -135,7 +163,9 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // ────────────────────────────────────────────────
             // View Details Modal
+            // ────────────────────────────────────────────────
             const viewButtons = document.querySelectorAll('.view-details');
             const modal = new bootstrap.Modal(document.getElementById('complaintModal'));
 
@@ -143,6 +173,7 @@
                 btn.addEventListener('click', function () {
                     document.getElementById('modalTitle').textContent = this.getAttribute('data-title');
                     document.getElementById('modalUser').textContent = this.getAttribute('data-user');
+                    document.getElementById('modalEmail').textContent = `(${this.getAttribute('data-email')})`;
                     document.getElementById('modalDate').textContent = this.getAttribute('data-date');
 
                     const statusEl = document.getElementById('modalStatus');
@@ -158,64 +189,64 @@
                 });
             });
 
-            // Status Change (AJAX)
-           const statusSelects = document.querySelectorAll('.status-change');
-
+            // ────────────────────────────────────────────────
+            // Status Change (AJAX - FIXED)
+            // ────────────────────────────────────────────────
+            const statusSelects = document.querySelectorAll('.status-change');
             statusSelects.forEach(select => {
-                // Store original value in case we need to revert
-                select.dataset.currentStatus = select.value;
-
                 select.addEventListener('change', async function () {
                     const complaintId = this.getAttribute('data-id');
                     const newStatus = this.value;
 
                     if (!confirm(`Change status to "${newStatus}"?`)) {
-                        this.value = this.dataset.currentStatus; // revert
+                        this.value = this.getAttribute('data-current-status');
                         return;
                     }
 
                     const formData = new FormData();
                     formData.append('id', complaintId);
                     formData.append('newStatus', newStatus);
-                    // Anti-forgery token (must be present in layout or page)
-                    const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
-                    if (tokenElement) {
-                        formData.append('__RequestVerificationToken', tokenElement.value);
+
+                    // Get anti-forgery token (must exist in layout)
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+                    if (token) {
+                        formData.append('__RequestVerificationToken', token);
                     }
 
                     try {
                         const response = await fetch('/Complaint/UpdateStatus', {
                             method: 'POST',
-                            body: formData,  // ← use FormData, not JSON
-                            credentials: 'same-origin'  // important for cookies/token
+                            body: formData,
+                            credentials: 'same-origin'
                         });
 
                         if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
+                            throw new Error(`Server error: ${response.status}`);
                         }
 
                         const result = await response.json();
 
                         if (result.success) {
                             alert(result.message);
-                            location.reload();  // refresh to show new status
+                            location.reload();
                         } else {
                             alert(result.message || 'Failed to update status.');
-                            this.value = this.dataset.currentStatus; // revert
+                            this.value = this.getAttribute('data-current-status');
                         }
                     } catch (err) {
-                        alert('Error: Could not connect to server.\n' + err.message);
-                        this.value = this.dataset.currentStatus; // revert
+                        alert('Error: ' + err.message);
+                        this.value = this.getAttribute('data-current-status');
                     }
                 });
             });
-        });
 
-            // Filter function
+            // ────────────────────────────────────────────────
+            // Filter & Search
+            // ────────────────────────────────────────────────
             window.applyFilter = function () {
                 const status = document.getElementById('statusFilter').value;
                 const search = document.getElementById('searchInput').value.trim();
-                let url = `/Complaint/Index?statusFilter=${status}`;
+                let url = `/Complaint/Index?statusFilter=${encodeURIComponent(status)}`;
                 if (search) url += `&search=${encodeURIComponent(search)}`;
                 window.location.href = url;
             };

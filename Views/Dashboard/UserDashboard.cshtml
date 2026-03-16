@@ -1,8 +1,11 @@
 ﻿@model UserDashboardViewModel
-
+@using AccommodationManagement.Models
 @{
     ViewData["Title"] = "My Dashboard";
     var notices = ViewBag.LatestNotices as IEnumerable<Notice> ?? Enumerable.Empty<Notice>();
+}
+@{
+    var menu = ViewBag.TodayMenu as MessMenu;
 }
 
 <div class="container-fluid py-4">
@@ -183,6 +186,7 @@
             <!-- Mess Menu -->
             <div class="col-md-4">
                 <div class="card border-0 shadow-lg h-100">
+
                     <div class="card-header bg-success text-white">
                         <i class="bi bi-cup-hot me-2"></i>
                         Today's Mess Menu
@@ -190,20 +194,38 @@
 
                     <div class="card-body">
 
-                        <p class="mb-1"><strong>Breakfast</strong></p>
-                        <small class="text-muted">Poha, Tea</small>
+                        @if (menu == null)
+                        {
+                            <div class="text-center text-muted py-3">
+                                <i class="bi bi-cup-hot fs-2"></i>
+                                <p class="mt-2">Menu not updated for today</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="mb-1"><strong>Breakfast</strong></p>
+                            <small class="text-muted">@menu.Breakfast</small>
 
-                        <hr>
+                            <hr>
 
-                        <p class="mb-1"><strong>Lunch</strong></p>
-                        <small class="text-muted">Dal, Rice, Chapati</small>
+                            <p class="mb-1"><strong>Lunch</strong></p>
+                            <small class="text-muted">@menu.Lunch</small>
 
-                        <hr>
+                            <hr>
 
-                        <p class="mb-1"><strong>Dinner</strong></p>
-                        <small class="text-muted">Paneer, Roti, Salad</small>
+                            <p class="mb-1"><strong>Dinner</strong></p>
+                            <small class="text-muted">@menu.Dinner</small>
+
+                            @if (!string.IsNullOrEmpty(menu.SpecialNote))
+                            {
+                                <hr>
+                                <p class="mb-1 text-info"><strong>Note</strong></p>
+                                <small class="text-muted">@menu.SpecialNote</small>
+                            }
+                        }
 
                     </div>
+
                 </div>
             </div>
 
@@ -211,24 +233,26 @@
             <!-- Weather Widget -->
             <div class="col-md-4">
                 <div class="card border-0 shadow-lg h-100">
+
                     <div class="card-header bg-info text-white">
                         <i class="bi bi-cloud-sun me-2"></i>
-                        Ahmedabad Weather
+                        Live Weather
                     </div>
 
                     <div class="card-body text-center">
 
-                        <i class="bi bi-sun display-4 text-warning"></i>
+                        <img id="weatherIcon" width="80" />
 
-                        <h2 class="mt-2 fw-bold">37°C</h2>
+                        <h3 id="temp">-- °C</h3>
 
-                        <p class="text-muted mb-1">Sunny</p>
+                        <p id="city" class="fw-bold"></p>
 
-                        <small class="text-muted">
-                            Feels like 39°C
+                        <small>
+                            Humidity: <span id="humidity"></span>
                         </small>
 
                     </div>
+
                 </div>
             </div>
 
@@ -276,6 +300,8 @@
     }
 </div>
 
+
+
 @section Styles {
     <style>
         .stat-card, .card {
@@ -312,3 +338,5 @@
             }
     </style>
 }
+
+<script src="~/js/weather.js"></script>

@@ -20,6 +20,7 @@ namespace AccommodationManagement.Data
 
         public DbSet<GateEntryLog> GateEntryLogs { get; set; }
 
+        public DbSet<MessMenu> MessMenus { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

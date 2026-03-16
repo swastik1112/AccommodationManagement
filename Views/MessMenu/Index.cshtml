@@ -1,0 +1,141 @@
+﻿@model IEnumerable<AccommodationManagement.Models.MessMenu>
+
+@{
+    ViewData["Title"] = "Mess Menu Management";
+    var latestMenuDate = Model.Any() ? Model.Max(m => m.MenuDate) : (DateTime?)null;
+}
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 gap-3 animate__animated animate__fadeIn">
+        <h2 class="fw-bold text-success mb-0">
+            <i class="bi bi-cup-hot-fill me-3"></i>
+            Mess Menu Management
+        </h2>
+
+        <a asp-action="Create" class="btn btn-success btn-lg shadow-sm">
+            <i class="bi bi-plus-circle me-2"></i> Add New Daily Menu
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-lg text-center py-5 animate__animated animate__fadeIn">
+            <div class="card-body">
+                <i class="bi bi-cup-hot display-1 text-muted mb-4 opacity-75"></i>
+                <h4 class="text-muted mb-3">No Menu Added Yet</h4>
+                <p class="lead text-muted mb-4">
+                    Start planning daily meals for the girls by adding today's menu.
+                </p>
+                <a asp-action="Create" class="btn btn-outline-success btn-lg px-5">
+                    Add First Menu
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-lg animate__animated animate__fadeIn">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-success">
+                            <tr>
+                                <th>Date</th>
+                                <th>Breakfast</th>
+                                <th>Lunch</th>
+                                <th>Dinner</th>
+                                <th>Special Note</th>
+                                <th>Added By</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderByDescending(m => m.MenuDate))
+                            {
+                                <tr>
+                                    <td class="fw-bold text-nowrap">
+                                        @item.MenuDate.ToString("dd MMM yyyy")
+                                        <small class="text-muted d-block">@item.MenuDate.ToString("dddd")</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-warning text-dark px-3 py-2">@item.Breakfast</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary px-3 py-2">@item.Lunch</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-danger px-3 py-2">@item.Dinner</span>
+                                    </td>
+                                    <td>
+                                        @if (string.IsNullOrWhiteSpace(item.SpecialNote))
+                                        {
+                                            <span class="text-muted fst-italic">— No special note —</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-truncate d-inline-block" style="max-width: 250px;"
+                                                  title="@item.SpecialNote">
+                                                @item.SpecialNote
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="text-muted">@item.AddedBy</td>
+                                    <td class="text-center">
+                                        <div class="d-flex gap-2 justify-content-center flex-wrap">
+                                            <a asp-action="Edit" asp-route-id="@item.Id"
+                                               class="btn btn-sm btn-warning text-dark">
+                                                <i class="bi bi-pencil-square"></i> Edit
+                                            </a>
+                                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                        onclick="return confirm('Delete menu for @item.MenuDate.ToString("dd MMM yyyy")?');">
+                                                    <i class="bi bi-trash"></i> Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer Summary -->
+            <div class="card-footer bg-light text-center py-3">
+                <small class="text-muted">
+                    Showing @Model.Count() menu record@(Model.Count() != 1 ? "s" : "") •
+                    Latest menu: @(latestMenuDate?.ToString("dd MMM yyyy") ?? "N/A")
+                </small>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .table-hover tbody tr:hover {
+            background-color: rgba(46, 125, 50, 0.08);
+            transition: background-color 0.2s ease;
+        }
+
+        .card {
+            border-radius: 18px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 25px 50px rgba(0,0,0,0.12) !important;
+            }
+
+        .badge {
+            font-size: 0.95rem;
+            padding: 8px 12px;
+            font-weight: 500;
+        }
+    </style>
+}

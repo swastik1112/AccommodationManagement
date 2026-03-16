@@ -17,6 +17,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 // Seed roles and admin

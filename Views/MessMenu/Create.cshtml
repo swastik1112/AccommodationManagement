@@ -1,0 +1,171 @@
+﻿@model MessMenu
+
+@{
+    ViewData["Title"] = "Add Daily Mess Menu";
+}
+
+<div class="min-vh-100 d-flex align-items-center mess-bg">
+    <!-- Animated background -->
+    <div class="bg-animation"></div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8 col-xl-7">
+                <div class="card border-0 shadow-xl animate__animated animate__fadeInUp mess-card">
+                    <div class="card-header text-center py-5 bg-gradient-success text-white">
+                        <div class="mx-auto mb-4" style="font-size: 3.5rem;">🍽️</div>
+                        <h3 class="mb-1 fw-bold">Add Daily Mess Menu</h3>
+                        <p class="mb-0 opacity-85">Plan today's meals for the girls</p>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        <form asp-action="Create" method="post" id="menuForm">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-5" role="alert"></div>
+
+                            <div class="row g-4">
+                                <!-- Date -->
+                                <div class="col-md-12 form-floating">
+                                    <input asp-for="MenuDate" type="date" class="form-control" required />
+                                    <label asp-for="MenuDate" class="form-label">Menu Date</label>
+                                    <span asp-validation-for="MenuDate" class="text-danger small"></span>
+                                </div>
+
+                                <!-- Breakfast -->
+                                <div class="col-md-12 form-floating">
+                                    <input asp-for="Breakfast" class="form-control" placeholder=" " required />
+                                    <label asp-for="Breakfast" class="form-label">Breakfast</label>
+                                    <span asp-validation-for="Breakfast" class="text-danger small"></span>
+                                </div>
+
+                                <!-- Lunch -->
+                                <div class="col-md-12 form-floating">
+                                    <input asp-for="Lunch" class="form-control" placeholder=" " required />
+                                    <label asp-for="Lunch" class="form-label">Lunch</label>
+                                    <span asp-validation-for="Lunch" class="text-danger small"></span>
+                                </div>
+
+                                <!-- Dinner -->
+                                <div class="col-md-12 form-floating">
+                                    <input asp-for="Dinner" class="form-control" placeholder=" " required />
+                                    <label asp-for="Dinner" class="form-label">Dinner</label>
+                                    <span asp-validation-for="Dinner" class="text-danger small"></span>
+                                </div>
+
+                                <!-- Special Note -->
+                                <div class="col-12 form-floating">
+                                    <textarea asp-for="SpecialNote" class="form-control" placeholder=" " rows="4"></textarea>
+                                    <label asp-for="SpecialNote" class="form-label">Special Note / Instructions</label>
+                                    <div class="form-text text-muted small">
+                                        e.g., "Extra rice today", "No onion in lunch", "Festival special dinner"
+                                    </div>
+                                    <span asp-validation-for="SpecialNote" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-5">
+                                <button type="submit" class="btn btn-success btn-lg px-5 fw-bold shadow" id="submitBtn">
+                                    <span class="spinner-border spinner-border-sm d-none me-2" role="status" id="loadingSpinner"></span>
+                                    <i class="bi bi-save-fill me-2"></i> Save Menu
+                                </button>
+
+                                <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-5">
+                                    <i class="bi bi-arrow-left me-2"></i> Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card-footer bg-light text-center py-3">
+                        <small class="text-muted">
+                            Menu will be visible to all girls on their dashboard
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .mess-bg {
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bg-animation {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.15) 0%, transparent 50%), radial-gradient(circle at 70% 70%, rgba(255,255,255,0.10) 0%, transparent 50%);
+            animation: floatBg 25s infinite alternate ease-in-out;
+            pointer-events: none;
+        }
+
+        @@keyframes floatBg {
+            0%
+
+        {
+            transform: translate(0, 0) scale(1);
+        }
+
+        100% {
+            transform: translate(50px, -50px) scale(1.08);
+        }
+
+        }
+
+        .mess-card {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.3);
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+            .mess-card:hover {
+                transform: translateY(-12px);
+                box-shadow: 0 40px 80px -20px rgba(0,0,0,0.45) !important;
+            }
+
+        .bg-gradient-primary, .bg-gradient-success {
+            background: linear-gradient(90deg, #4caf50 0%, #2e7d32 100%);
+        }
+
+        .form-control:focus ~ label {
+            color: #2e7d32 !important;
+        }
+
+        .btn-success {
+            background: linear-gradient(90deg, #4caf50 0%, #2e7d32 100%);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+            .btn-success:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 40px rgba(46, 125, 50, 0.5);
+            }
+    </style>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('menuForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const spinner = document.getElementById('loadingSpinner');
+
+            form.addEventListener('submit', function () {
+                submitBtn.disabled = true;
+                spinner.classList.remove('d-none');
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Saving Menu...';
+            });
+        });
+    </script>
+}

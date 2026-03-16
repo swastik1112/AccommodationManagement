@@ -93,6 +93,10 @@ namespace AccommodationManagement.Controllers
                 .Include(a => a.Bed)
                 .FirstOrDefaultAsync(a => a.UserId == currentUser.Id);
 
+            var todayMenu = _context.MessMenus
+            .FirstOrDefault(x => x.MenuDate.Date == DateTime.Today);
+            ViewBag.TodayMenu = todayMenu;
+
             var model = new UserDashboardViewModel
             {
                 FullName = currentUser.FullName,

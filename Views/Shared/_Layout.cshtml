@@ -181,6 +181,15 @@
                             Emergency Alerts
                         </a>
                     </li>
+                    @if (User.IsInRole("Warden"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="MessMenu" asp-action="Index">
+                                <i class="bi bi-cup-hot"></i>
+                                Manage Mess Menu
+                            </a>
+                        </li>
+                    }
                     <li class="nav-item mt-3">
                         <small class="px-3 text-uppercase opacity-75 fw-semibold">
                             Security

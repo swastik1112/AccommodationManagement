@@ -4,73 +4,163 @@
     ViewData["Title"] = "My Digital ID";
 }
 
-<div class="container py-5">
+<div class="min-vh-100 d-flex align-items-center digital-id-bg py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <!-- Digital ID Card -->
+                <div class="card border-0 shadow-2xl digital-id-card animate__animated animate__fadeInUp">
 
-    <div class="row justify-content-center">
+                    <!-- Top Gradient Bar -->
+                    <div class="digital-id-header bg-gradient-primary text-white text-center py-4">
+                        <h4 class="mb-0 fw-bold">
+                            <i class="bi bi-shield-lock-fill me-2"></i>
+                            Girls RMS Digital ID
+                        </h4>
+                    </div>
 
-        <div class="col-md-5">
+                    <div class="card-body p-5 text-center">
+                        <!-- Avatar -->
+                        <div class="mx-auto mb-4 avatar-circle">
+                            <i class="bi bi-person-fill fs-1 text-primary"></i>
+                        </div>
 
-            <div class="card shadow-lg border-0 text-center p-4">
+                        <!-- Name -->
+                        <h3 class="fw-bold text-dark mb-1">@Model.FullName</h3>
+                        <p class="text-muted mb-4">@Model.Email</p>
 
-                <h4 class="text-primary fw-bold mb-3">
-                    <i class="bi bi-person-badge-fill"></i>
-                    Hostel Digital ID
-                </h4>
+                        <!-- Room & Bed -->
+                        <div class="row g-4 mb-5">
+                            <div class="col-6">
+                                <div class="info-box">
+                                    <small class="text-muted d-block">Room Number</small>
+                                    <h4 class="fw-bold text-primary mb-0">
+                                        @(Model.RoomNumber ?? "Not Assigned")
+                                    </h4>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="info-box">
+                                    <small class="text-muted d-block">Bed Number</small>
+                                    <h4 class="fw-bold text-success mb-0">
+                                        @(Model.BedNumber ?? "Not Assigned")
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
 
-                <!-- Avatar -->
-                <div class="mb-3">
-                    <i class="bi bi-person-circle display-1 text-primary"></i>
-                </div>
+                        <!-- Emergency Contact -->
+                        <div class="mb-5">
+                            <small class="text-muted d-block mb-1">Emergency Contact</small>
+                            <h5 class="fw-bold text-danger">
+                                @(Model.EmergencyContact ?? "Not Available")
+                            </h5>
+                        </div>
 
-                <h5 class="fw-bold">@Model.FullName</h5>
+                        <!-- QR Code -->
+                        <div class="qr-container mx-auto mb-4">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=@(Model.Email)"
+                                 alt="Digital ID QR Code"
+                                 class="img-fluid qr-code">
+                        </div>
 
-                <p class="text-muted mb-1">@Model.Email</p>
-
-                <p class="text-muted">@Model.Phone</p>
-
-                <hr />
-
-                <div class="row">
-
-                    <div class="col-6">
-                        <strong>Room</strong>
-                        <p class="text-primary fw-bold">
-                            @(Model.RoomNumber ?? "Not Assigned")
+                        <p class="text-muted small mb-0">
+                            Scan this QR code at the hostel gate or security desk
                         </p>
                     </div>
 
-                    <div class="col-6">
-                        <strong>Bed</strong>
-                        <p class="text-success fw-bold">
-                            @(Model.BedNumber ?? "Not Assigned")
-                        </p>
+                    <!-- Footer -->
+                    <div class="card-footer bg-light text-center py-3">
+                        <small class="text-muted">
+                            Valid for @DateTime.Now.Year • Girls RMS • Surat
+                        </small>
                     </div>
-
                 </div>
-
-                <hr />
-
-                <p class="mb-1">
-                    <strong>Emergency Contact</strong>
-                </p>
-
-                <p class="text-danger fw-bold">
-                    @(Model.EmergencyContact ?? "Not Available")
-                </p>
-
-                <hr />
-
-                <!-- QR Code -->
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=@Model.Email" />
-
-                <p class="text-muted mt-2">
-                    Scan at Hostel Gate
-                </p>
-
             </div>
-
         </div>
-
     </div>
-
 </div>
+
+@section Styles {
+    <style>
+        .digital-id-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bg-animation {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.15) 0%, transparent 50%);
+            animation: floatBg 30s infinite alternate ease-in-out;
+            pointer-events: none;
+        }
+
+        @@keyframes floatBg {
+            0%
+
+        {
+            transform: translate(0, 0);
+        }
+
+        100% {
+            transform: translate(40px, -40px);
+        }
+
+        }
+
+        .digital-id-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.4);
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+            .digital-id-card:hover {
+                transform: translateY(-12px);
+                box-shadow: 0 40px 80px -20px rgba(0,0,0,0.45) !important;
+            }
+
+        .digital-id-header {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .avatar-circle {
+            width: 110px;
+            height: 110px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 6px solid #667eea;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+            margin: 0 auto;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 16px 12px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+        }
+
+        .qr-container {
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .qr-code {
+            border-radius: 8px;
+        }
+    </style>
+}

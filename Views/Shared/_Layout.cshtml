@@ -241,7 +241,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="IdCard" asp-action="Index">
+                        <a class="nav-link  @(IsActive("IdCard", "Index"))" asp-controller="IdCard" asp-action="Index">
                             <i class="bi bi-person-badge-fill me-2"></i>
                             My Digital ID
                         </a>

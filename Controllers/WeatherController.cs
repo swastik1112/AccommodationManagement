@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace AccommodationManagement.Models
+namespace AccommodationManagement.Controllers
 {
     public class WeatherController : Controller
     {

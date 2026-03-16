@@ -1,0 +1,76 @@
+﻿@model AccommodationManagement.Models.DigitalIdViewModel
+
+@{
+    ViewData["Title"] = "My Digital ID";
+}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-5">
+
+            <div class="card shadow-lg border-0 text-center p-4">
+
+                <h4 class="text-primary fw-bold mb-3">
+                    <i class="bi bi-person-badge-fill"></i>
+                    Hostel Digital ID
+                </h4>
+
+                <!-- Avatar -->
+                <div class="mb-3">
+                    <i class="bi bi-person-circle display-1 text-primary"></i>
+                </div>
+
+                <h5 class="fw-bold">@Model.FullName</h5>
+
+                <p class="text-muted mb-1">@Model.Email</p>
+
+                <p class="text-muted">@Model.Phone</p>
+
+                <hr />
+
+                <div class="row">
+
+                    <div class="col-6">
+                        <strong>Room</strong>
+                        <p class="text-primary fw-bold">
+                            @(Model.RoomNumber ?? "Not Assigned")
+                        </p>
+                    </div>
+
+                    <div class="col-6">
+                        <strong>Bed</strong>
+                        <p class="text-success fw-bold">
+                            @(Model.BedNumber ?? "Not Assigned")
+                        </p>
+                    </div>
+
+                </div>
+
+                <hr />
+
+                <p class="mb-1">
+                    <strong>Emergency Contact</strong>
+                </p>
+
+                <p class="text-danger fw-bold">
+                    @(Model.EmergencyContact ?? "Not Available")
+                </p>
+
+                <hr />
+
+                <!-- QR Code -->
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=@Model.Email" />
+
+                <p class="text-muted mt-2">
+                    Scan at Hostel Gate
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

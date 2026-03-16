@@ -2,9 +2,11 @@ using AccommodationManagement.Data;
 using AccommodationManagement.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 
 var builder = WebApplication.CreateBuilder(args);
 
+ExcelPackage.License.SetNonCommercialPersonal("AccommodationManagement");
 // Add services
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

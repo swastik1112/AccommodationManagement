@@ -18,6 +18,8 @@ namespace AccommodationManagement.Data
 
         public DbSet<EmergencyRequest> EmergencyRequests { get; set; }
 
+        public DbSet<GateEntryLog> GateEntryLogs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

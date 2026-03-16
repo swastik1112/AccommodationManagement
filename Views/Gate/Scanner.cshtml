@@ -1,0 +1,178 @@
+﻿@{
+    ViewData["Title"] = "Gate QR Scanner";
+}
+
+<div class="min-vh-100 d-flex align-items-center scanner-bg py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-xl-8">
+                <!-- Main Scanner Card -->
+                <div class="card border-0 shadow-2xl scanner-card animate__animated animate__fadeInUp">
+
+                    <div class="card-header bg-gradient-primary text-white text-center py-4">
+                        <h3 class="mb-1 fw-bold">
+                            <i class="bi bi-qr-code-scan me-3"></i>
+                            Hostel Gate QR Scanner
+                        </h3>
+                        <p class="mb-0 opacity-85">
+                            Scan the student's Digital ID QR Code to verify entry
+                        </p>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5 text-center">
+                        <!-- LARGE Scanner Container -->
+                        <div class="scanner-container mx-auto mb-4">
+                            <video id="preview" class="scanner-video"></video>
+                        </div>
+
+                        <!-- Instructions -->
+                        <div class="alert alert-info mb-4 shadow-sm">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Please position the QR code clearly within the large scanning frame
+                        </div>
+
+                        <!-- Scan Result -->
+                        <div id="scanResult" class="mt-3 min-height-100"></div>
+                    </div>
+
+                    <div class="card-footer bg-light text-center py-3">
+                        <small class="text-muted">
+                            Powered by HTML5 QR Code Scanner • Girls RMS • Secure Entry System
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .scanner-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scanner-card {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.3);
+            overflow: hidden;
+            max-width: 620px;
+            margin: 0 auto;
+        }
+
+        /* LARGE Scanner Container */
+        .scanner-container {
+            border: 6px solid #667eea;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #000;
+            max-width: 520px;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .scanner-video {
+            width: 100%;
+            height: auto;
+            display: block;
+            min-height: 520px; /* Large scanner area */
+            object-fit: cover;
+        }
+
+        /* Scanning frame overlay */
+        .scanner-container::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 280px;
+            height: 280px;
+            border: 4px solid rgba(255,255,255,0.7);
+            border-radius: 12px;
+            pointer-events: none;
+            box-shadow: 0 0 0 9999px rgba(0,0,0,0.45);
+            animation: scanFramePulse 2s infinite;
+        }
+
+        @@keyframes scanFramePulse {
+            0%, 100%
+
+        {
+            opacity: 0.7;
+        }
+
+        50% {
+            opacity: 1;
+        }
+
+        }
+
+        .bg-gradient-primary {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <script>
+        let html5QrcodeScanner;
+
+        function onScanSuccess(decodedText, decodedResult) {
+            // Stop scanning
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+            }
+
+            const resultDiv = document.getElementById("scanResult");
+            resultDiv.innerHTML = `
+                <div class="alert alert-success shadow animate__animated animate__fadeIn">
+                    <i class="bi bi-check-circle-fill fs-3 d-block mb-3"></i>
+                    <h5>QR Code Scanned Successfully!</h5>
+                    <p class="mb-3">Redirecting to verification page...</p>
+                    <div class="spinner-border text-success" role="status"></div>
+                </div>
+            `;
+
+            // Redirect to decoded URL (your Digital ID verification page)
+            setTimeout(() => {
+                window.location.href = decodedText;
+            }, 1800);
+        }
+
+        function onScanFailure(error) {
+            // Silent - common during scanning
+        }
+
+        // Initialize scanner with LARGE box
+        document.addEventListener('DOMContentLoaded', function () {
+            html5QrcodeScanner = new Html5QrcodeScanner(
+                "preview",
+                {
+                    fps: 12,
+                    qrbox: { width: 280, height: 280 },   // Large scanning box
+                    aspectRatio: 1.0,
+                    disableFlip: false
+                },
+                false
+            );
+
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        });
+
+        // Cleanup when leaving page
+        window.addEventListener('beforeunload', function () {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+            }
+        });
+    </script>
+}

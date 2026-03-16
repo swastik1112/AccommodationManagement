@@ -1,0 +1,124 @@
+﻿@model AccommodationManagement.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "Gate Entry Success";
+}
+
+<div class="min-vh-100 d-flex align-items-center success-bg py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card border-0 shadow-2xl success-card animate__animated animate__fadeInUp">
+
+                    <!-- Success Header -->
+                    <div class="card-header bg-success text-white text-center py-5">
+                        <div class="success-icon mx-auto mb-4">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <h2 class="fw-bold mb-1">Entry Verified</h2>
+                        <p class="mb-0 opacity-90">Welcome to the hostel</p>
+                    </div>
+
+                    <div class="card-body p-5 text-center">
+                        <!-- Student Info -->
+                        <div class="mb-4">
+                            <div class="avatar-circle mx-auto mb-4">
+                                <i class="bi bi-person-fill fs-1 text-success"></i>
+                            </div>
+                            <h4 class="fw-bold text-dark mb-1">@Model.FullName</h4>
+                            <p class="text-muted mb-0">@Model.Email</p>
+                        </div>
+
+                        <!-- Action Status -->
+                        <div class="alert alert-success border-0 shadow-sm py-3 mb-4">
+                            <h5 class="mb-0 fw-bold">
+                                @ViewBag.Action Logged Successfully
+                            </h5>
+                        </div>
+
+                        <!-- Timestamp -->
+                        <div class="d-flex justify-content-center align-items-center gap-2 text-muted">
+                            <i class="bi bi-clock"></i>
+                            <span class="fw-medium">
+                                @DateTime.Now.ToString("dd MMMM yyyy • hh:mm tt")
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="card-footer bg-light text-center py-4">
+                        <small class="text-muted">
+                            Thank you for using Girls RMS Digital ID System
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Back to Dashboard Button -->
+                <div class="text-center mt-4">
+                    <a asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-light btn-lg px-5">
+                        <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .success-bg {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-card {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.4);
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .success-icon {
+            font-size: 5.5rem;
+            color: #28a745;
+            animation: successPop 0.8s ease;
+        }
+
+        @@keyframes successPop {
+            0%
+
+        {
+            transform: scale(0.3);
+            opacity: 0;
+        }
+
+        70% {
+            transform: scale(1.2);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+
+        }
+
+        .avatar-circle {
+            width: 110px;
+            height: 110px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 5px solid #28a745;
+            margin: 0 auto;
+        }
+
+        .bg-gradient-primary {
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+        }
+    </style>
+}

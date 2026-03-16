@@ -181,6 +181,31 @@
                             Emergency Alerts
                         </a>
                     </li>
+                    <li class="nav-item mt-3">
+                        <small class="px-3 text-uppercase opacity-75 fw-semibold">
+                            Security
+                        </small>
+                    </li>
+
+                    @if (User.IsInRole("Admin") || User.IsInRole("Warden"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Gate" asp-action="Scanner">
+                                <i class="bi bi-qr-code-scan me-2"></i>
+                                QR Gate Scanner
+                            </a>
+                        </li>
+                    }
+                    <li class="nav-item">
+                        <a class="nav-link @(IsActive("Gate", "Logs"))"
+                           asp-controller="Gate"
+                           asp-action="Logs">
+
+                            <i class="bi bi-shield-lock-fill me-2"></i>
+                            Gate Entry Logs
+                        </a>
+                    </li>
+                    
                 }
 
                 <!-- ──────────────────────────────────────────────── -->
